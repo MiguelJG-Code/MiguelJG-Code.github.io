@@ -1,6 +1,6 @@
 1.Project Name: Foursight Car Rental
 
-   We were given a task to find a way to implement Barcode reader, Qr generator, and sents email. So we decided to maake a car rental
+   We were given a task to find a way to implement Barcode reader, Qr generator, and sents email. So we decided to maake a car rental.
 
 2. What it does
 
