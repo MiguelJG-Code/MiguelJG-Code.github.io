@@ -121,35 +121,6 @@
     .footer-right a { font-family: var(--mono); font-size: 0.65rem; color: #555; text-decoration: none; letter-spacing: 0.06em; transition: color 0.2s; }
     .footer-right a:hover { color: #d4501a; }
 
-    /* EDIT PANEL */
-    .panel-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; }
-    .panel-backdrop.open { display: block; }
-    .edit-panel { position: fixed; top: 0; right: -520px; width: 500px; height: 100vh; background: var(--surface); border-left: 1px solid var(--border); z-index: 1000; overflow-y: auto; transition: right 0.3s ease; display: flex; flex-direction: column; }
-    .edit-panel.open { right: 0; }
-    .panel-header { display: flex; align-items: center; justify-content: space-between; padding: 1.5rem 2rem; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--surface); z-index: 2; }
-    .panel-title { font-family: var(--mono); font-size: 0.85rem; font-weight: 500; letter-spacing: 0.06em; }
-    .panel-close { font-family: var(--mono); font-size: 1.2rem; background: none; border: none; cursor: pointer; color: var(--ink-muted); padding: 0.25rem 0.5rem; }
-    .panel-close:hover { color: var(--ink); }
-    .panel-body { padding: 2rem; flex: 1; }
-    .panel-field { margin-bottom: 1.5rem; }
-    .panel-label { font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.1em; color: var(--accent2); text-transform: uppercase; margin-bottom: 0.5rem; display: block; }
-    .panel-input, .panel-textarea { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--ink); padding: 0.75rem 1rem; font-family: var(--sans); font-size: 0.9rem; outline: none; transition: border-color 0.2s; font-weight: 300; }
-    .panel-input:focus, .panel-textarea:focus { border-color: var(--accent2); }
-    .panel-textarea { resize: vertical; min-height: 90px; }
-    .panel-hint { font-size: 0.75rem; color: var(--ink-muted); margin-top: 0.35rem; font-family: var(--mono); }
-    .panel-actions { display: flex; gap: 0.75rem; padding: 1.5rem 2rem; border-top: 1px solid var(--border); position: sticky; bottom: 0; background: var(--surface); }
-    .btn-save { font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.08em; padding: 0.85rem 1.75rem; background: var(--ink); color: #fff; border: none; cursor: pointer; transition: background 0.2s; flex: 1; }
-    .btn-save:hover { background: var(--accent2); }
-    .btn-cancel { font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.08em; padding: 0.85rem 1.25rem; background: transparent; color: var(--ink-muted); border: 1px solid var(--border); cursor: pointer; }
-    .btn-cancel:hover { color: var(--ink); }
-    .btn-delete { font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.08em; padding: 0.85rem 1.25rem; background: transparent; color: #c0392b; border: 1px solid #e0b0b0; cursor: pointer; }
-    .btn-delete:hover { background: #fff0f0; }
-    .add-btn { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.08em; padding: 0.75rem 1.5rem; background: transparent; color: var(--ink); border: 1px dashed var(--border); cursor: pointer; transition: border-color 0.2s, color 0.2s; display: none; width: 100%; margin-top: 1.5px; }
-    .add-btn:hover { border-color: var(--accent2); color: var(--accent2); }
-    .edit-mode .add-btn { display: block; }
-    .edit-banner { display: none; position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); background: var(--ink); color: #fff; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.08em; padding: 0.75rem 1.5rem; z-index: 200; border: 1px solid #333; white-space: nowrap; }
-    .edit-banner.show { display: block; }
-
     /* ANIMATIONS */
     @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -186,7 +157,6 @@
       <li><a href="#skills">Skills</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
-    <button class="edit-toggle-btn" id="editToggle" onclick="toggleEditMode()">✏ Edit Mode</button>
   </nav>
 
   <!-- HERO -->
@@ -229,7 +199,6 @@
   <section id="projects">
     <div class="section-header reveal"><span class="section-num">02</span><h2 class="section-title">Projects</h2></div>
     <div class="projects-grid" id="projectsGrid"></div>
-    <button class="add-btn" onclick="openAddProject()">+ Add New Project</button>
   </section>
 
   <!-- SKILLS -->
@@ -237,7 +206,6 @@
     <div class="section-header reveal"><span class="section-num">03</span><h2 class="section-title">Skills</h2></div>
     <div class="skills-grid" id="skillsGrid"></div>
     <div class="skills-empty" id="skillsEmpty">Skills coming soon — check back as the years goes on.</div>
-    <button class="add-btn" onclick="openAddSkillGroup()">+ Add Skill Category</button>
   </section>
 
   <!-- CONTACT -->
@@ -300,14 +268,10 @@
     const defaultSkills = [];
 
     // STATE
-    let projects = JSON.parse(localStorage.getItem('pf_projects') || 'null') || defaultProjects;
-    let skills   = JSON.parse(localStorage.getItem('pf_skills')   || 'null') || defaultSkills;
-    let editMode = false;
+    let projects = defaultProjects;
+    let skills = defaultSkills;
 
-    function save() {
-      localStorage.setItem('pf_projects', JSON.stringify(projects));
-      localStorage.setItem('pf_skills',   JSON.stringify(skills));
-    }
+    
 
     // RENDER PROJECTS
     function renderProjects() {
@@ -317,8 +281,7 @@
         const card = document.createElement('div');
         card.className = 'project-card reveal';
         card.innerHTML = `
-          <button class="card-edit-btn" onclick="openEditProject(${p.id})">Edit</button>
-          <div class="project-type">${p.type}</div>
+                    <div class="project-type">${p.type}</div>
           <h3 class="project-title">${p.title}</h3>
           <p class="project-desc">${p.desc}</p>
           <div class="project-tags">${p.tags.split(',').map(t=>`<span class="tag">${t.trim()}</span>`).join('')}</div>
@@ -349,124 +312,38 @@
           <ul class="skill-list">
             ${s.items.split('\n').filter(i=>i.trim()).map(i=>`<li>${i.trim()}</li>`).join('')}
           </ul>
-          <button class="skill-group-edit-btn" onclick="openEditSkill(${s.id})">Edit Category</button>
-        `;
+                  `;
         grid.appendChild(group);
       });
       observeReveals();
     }
 
     // EDIT MODE
-    function toggleEditMode() {
-      editMode = !editMode;
-      document.body.classList.toggle('edit-mode', editMode);
-      const btn = document.getElementById('editToggle');
-      btn.textContent = editMode ? '✓ Done Editing' : '✏ Edit Mode';
-      btn.classList.toggle('active', editMode);
-      document.getElementById('editBanner').classList.toggle('show', editMode);
-    }
+    
 
     // PANEL
-    function openPanel(title, bodyHTML, actions) {
-      document.getElementById('panelTitle').textContent = title;
-      document.getElementById('panelBody').innerHTML = bodyHTML;
-      document.getElementById('panelActions').innerHTML = actions;
-      document.getElementById('editPanel').classList.add('open');
-      document.getElementById('backdrop').classList.add('open');
-    }
-    function closePanel() {
-      document.getElementById('editPanel').classList.remove('open');
-      document.getElementById('backdrop').classList.remove('open');
-    }
+    
+    
 
     // PROJECT EDITOR
-    function projectForm(p) {
-      return `
-        <div class="panel-field"><label class="panel-label">Category / Type</label><input class="panel-input" id="pType" value="${p.type}" placeholder="e.g. Hardware / Embedded"></div>
-        <div class="panel-field"><label class="panel-label">Project Title</label><input class="panel-input" id="pTitle" value="${p.title}" placeholder="My Awesome Project"></div>
-        <div class="panel-field"><label class="panel-label">Description</label><textarea class="panel-textarea" id="pDesc">${p.desc}</textarea></div>
-        <div class="panel-field"><label class="panel-label">Tags</label><input class="panel-input" id="pTags" value="${p.tags}" placeholder="C++, Arduino, Python"><p class="panel-hint">Separate with commas</p></div>
-        <div class="panel-field"><label class="panel-label">Project Link (optional)</label><input class="panel-input" id="pLink" value="${p.link === '#' ? '' : p.link}" placeholder="https://github.com/you/project"></div>
-      `;
-    }
-    function openEditProject(id) {
-      if (!editMode) return;
-      const p = projects.find(x => x.id === id);
-      openPanel('Edit Project', projectForm(p),
-        `<button class="btn-save" onclick="saveProject(${id})">Save Changes</button>
-         <button class="btn-cancel" onclick="closePanel()">Cancel</button>
-         <button class="btn-delete" onclick="deleteProject(${id})">Delete</button>`);
-    }
-    function openAddProject() {
-      openPanel('New Project', projectForm({ type:'', title:'', desc:'', tags:'', link:'' }),
-        `<button class="btn-save" onclick="addProject()">Add Project</button>
-         <button class="btn-cancel" onclick="closePanel()">Cancel</button>`);
-    }
-    function saveProject(id) {
-      const p = projects.find(x => x.id === id);
-      p.type  = document.getElementById('pType').value.trim();
-      p.title = document.getElementById('pTitle').value.trim();
-      p.desc  = document.getElementById('pDesc').value.trim();
-      p.tags  = document.getElementById('pTags').value.trim();
-      p.link  = document.getElementById('pLink').value.trim() || '#';
+    
+    
+    
+    
+    );
       save(); renderProjects(); closePanel();
     }
-    function addProject() {
-      projects.push({
-        id: Date.now(),
-        type:  document.getElementById('pType').value.trim()  || 'Project',
-        title: document.getElementById('pTitle').value.trim() || 'New Project',
-        desc:  document.getElementById('pDesc').value.trim()  || '',
-        tags:  document.getElementById('pTags').value.trim()  || '',
-        link:  document.getElementById('pLink').value.trim()  || '#'
-      });
-      save(); renderProjects(); closePanel();
-    }
-    function deleteProject(id) {
-      if (!confirm('Delete this project?')) return;
-      projects = projects.filter(x => x.id !== id);
-      save(); renderProjects(); closePanel();
-    }
+    
 
     // SKILL EDITOR
-    function skillForm(s) {
-      return `
-        <div class="panel-field"><label class="panel-label">Category Title</label><input class="panel-input" id="sTitle" value="${s.title}" placeholder="e.g. Languages"></div>
-        <div class="panel-field"><label class="panel-label">Skills</label><textarea class="panel-textarea" style="min-height:180px" id="sItems">${s.items}</textarea><p class="panel-hint">One skill per line</p></div>
-      `;
-    }
-    function openEditSkill(id) {
-      if (!editMode) return;
-      const s = skills.find(x => x.id === id);
-      openPanel('Edit Skill Category', skillForm(s),
-        `<button class="btn-save" onclick="saveSkill(${id})">Save Changes</button>
-         <button class="btn-cancel" onclick="closePanel()">Cancel</button>
-         <button class="btn-delete" onclick="deleteSkill(${id})">Delete</button>`);
-    }
-    function openAddSkillGroup() {
-      openPanel('New Skill Category', skillForm({ title:'', items:'' }),
-        `<button class="btn-save" onclick="addSkillGroup()">Add Category</button>
-         <button class="btn-cancel" onclick="closePanel()">Cancel</button>`);
-    }
-    function saveSkill(id) {
-      const s = skills.find(x => x.id === id);
-      s.title = document.getElementById('sTitle').value.trim();
-      s.items = document.getElementById('sItems').value.trim();
+    
+    
+    
+    
+    );
       save(); renderSkills(); closePanel();
     }
-    function addSkillGroup() {
-      skills.push({
-        id: Date.now(),
-        title: document.getElementById('sTitle').value.trim() || 'New Category',
-        items: document.getElementById('sItems').value.trim() || ''
-      });
-      save(); renderSkills(); closePanel();
-    }
-    function deleteSkill(id) {
-      if (!confirm('Delete this skill category?')) return;
-      skills = skills.filter(x => x.id !== id);
-      save(); renderSkills(); closePanel();
-    }
+    
 
     // SCROLL REVEAL
     function observeReveals() {
