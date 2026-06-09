@@ -1,12 +1,12 @@
 1.Project Name: Foursight Car Rental
 
-We were given a task to find a way to implement Barcode reader, Qr generator, and sents email. So we decided to maake a car rental
+   We were given a task to find a way to implement Barcode reader, Qr generator, and sents email. So we decided to maake a car rental
 
 2. What it does
 
-A console-based Car Rental Management System written in C that uses text files as its database, supports Admin and Cashier accounts, generates barcodes and receipts, and can send email confirmations. 
+   A console-based Car Rental Management System written in C that uses text files as its database, supports Admin and Cashier accounts, generates barcodes and receipts, and can send email confirmations. 
 
-4. Built with
+3. Built with
    This code implements a full-featured console Car Rental Management System with:
 
 * Admin/Cashier authentication
