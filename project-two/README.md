@@ -1,7 +1,7 @@
 1. PigMart — Online Pig Marketplace
 
 A full-stack web marketplace for buying pigs online, built for Samar region sellers.
-Live site: [Visit PigMart]([https://your-live-site-url.com](https://pigmartsamar.infinityfreeapp.com/?i=1))
+Live site: [Visit PigMart]([https://your-live-site-url.com](https://pigmartsamar.infinityfreeapp.com))
 
 2. What it does
 Customers can browse available pigs, filter by breed and size, and submit 
