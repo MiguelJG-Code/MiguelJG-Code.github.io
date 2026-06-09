@@ -1,0 +1,1880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PigMart — Premium Heritage Farm Pigs</title>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Dancing+Script:wght@600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --wood:#3B1F0E; --wood2:#5C3317; --wood3:#7B4A22;
+  --amber:#C8860A; --amber2:#E8A020; --gold:#D4AF37;
+  --cream:#F5EDD6; --parch:#EDE0C4; --aged:#C8B090;
+  --chalk:#1C2318; --chalk2:#253020;
+  --green:#2D5A27; --green2:#4A7A42; --greenp:#C8DFC4;
+  --red:#8B1A1A; --body:#2A1A08; --muted:#7A6040;
+  --r:10px; --sh:0 6px 28px rgba(0,0,0,.14);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Lora',serif;background:var(--cream);color:var(--body);min-height:100vh;overflow-x:hidden}
+
+/* NOISE GRAIN OVERLAY */
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  opacity:.028; mix-blend-mode:multiply;
+}
+/* BORDER FRAME */
+.edge-frame{
+  position:fixed;inset:0;pointer-events:none;z-index:9997;
+  border:7px solid var(--amber);
+  box-shadow:inset 0 0 0 2px rgba(212,175,55,.25),inset 0 0 32px rgba(200,134,10,.06);
+}
+
+/* NAV */
+nav{
+  position:sticky;top:0;z-index:300;height:66px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 36px;
+  background:linear-gradient(180deg,var(--wood) 0%,var(--wood2) 100%);
+  border-bottom:3px solid var(--amber);
+  box-shadow:0 4px 24px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.06);
+}
+/* Wood grain stripe */
+nav::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(90deg,
+    transparent 0,transparent 60px,
+    rgba(255,255,255,.012) 60px,rgba(255,255,255,.012) 61px,
+    transparent 61px,transparent 140px,
+    rgba(0,0,0,.06) 140px,rgba(0,0,0,.06) 141px
+  );
+}
+/* LOGO */
+.logo-wrap{display:flex;align-items:center;gap:11px;text-decoration:none;cursor:pointer}
+.logo-svg-ring{filter:drop-shadow(0 2px 6px rgba(0,0,0,.45))}
+.logo-text{display:flex;flex-direction:column;line-height:1}
+.logo-name{font-family:'Abril Fatface',cursive;font-size:1.65rem;color:var(--gold);letter-spacing:.5px;text-shadow:0 2px 8px rgba(0,0,0,.4)}
+.logo-tag{font-family:'Lora',serif;font-size:.56rem;letter-spacing:3px;text-transform:uppercase;color:var(--aged);margin-top:1px}
+
+.nav-links{display:flex;align-items:center;gap:2px}
+.nav-links a,.nav-dd-toggle{
+  font-family:'Lora',serif;font-size:.87rem;color:rgba(255,255,255,.58);
+  padding:7px 13px;border-radius:5px;text-decoration:none;transition:all .2s;
+  letter-spacing:.3px;cursor:pointer;display:flex;align-items:center;gap:4px;
+}
+.nav-links a:hover,.nav-links a.active,.nav-dd-toggle:hover{
+  background:rgba(212,175,55,.18);color:var(--gold)
+}
+
+/* Dropdown */
+.nav-dd{position:relative}
+.nav-dd-arrow{font-size:.55rem;transition:transform .25s;display:inline-block}
+.nav-dd:hover .nav-dd-arrow{transform:rotate(180deg)}
+.ddmenu{
+  position:absolute;top:calc(100% + 10px);left:50%;
+  transform:translateX(-50%) translateY(-6px);
+  background:var(--wood2);border:1.5px solid rgba(212,175,55,.4);
+  border-radius:var(--r);box-shadow:0 16px 40px rgba(0,0,0,.55);
+  min-width:185px;padding:6px;
+  opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;
+}
+.nav-dd:hover .ddmenu{opacity:1;pointer-events:all;transform:translateX(-50%) translateY(0)}
+.ddmenu a{
+  display:flex;align-items:center;gap:9px;padding:9px 13px;border-radius:6px;
+  font-size:.85rem;text-decoration:none;color:rgba(255,255,255,.65);
+  transition:.15s;font-family:'Lora',serif;
+}
+.ddmenu a:hover{background:rgba(212,175,55,.18);color:var(--gold)}
+.ddmenu a span{font-size:.85rem}
+
+/* Buttons */
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:9px 20px;border-radius:6px;font-size:.84rem;font-weight:600;
+  border:none;cursor:pointer;transition:all .2s;font-family:'Lora',serif;
+  text-decoration:none;letter-spacing:.35px;white-space:nowrap;
+}
+.btn-gold{
+  background:linear-gradient(180deg,var(--amber2) 0%,var(--amber) 100%);
+  color:#fff;box-shadow:0 3px 10px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.22);
+}
+.btn-gold:hover{background:linear-gradient(180deg,var(--amber) 0%,var(--wood3) 100%);transform:translateY(-1px);box-shadow:0 5px 14px rgba(0,0,0,.3)}
+.btn-outline{background:transparent;color:var(--amber);border:2px solid var(--amber)}
+.btn-outline:hover{background:rgba(200,134,10,.1);transform:translateY(-1px)}
+.btn-green{
+  background:linear-gradient(180deg,var(--green2) 0%,var(--green) 100%);
+  color:#fff;box-shadow:0 3px 10px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.15);
+}
+.btn-green:hover{background:linear-gradient(180deg,var(--green) 0%,#1A3615 100%);transform:translateY(-1px)}
+.btn-sm{padding:7px 14px;font-size:.79rem}
+.btn-wide{width:100%;justify-content:center;padding:13px 20px}
+
+/* HERO SPLIT */
+.hero{display:grid;grid-template-columns:56% 44%;min-height:430px}
+
+.hero-left{
+  background:linear-gradient(155deg,var(--wood) 0%,var(--wood2) 55%,var(--wood3) 100%);
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:flex-end;padding:52px 50px;
+}
+.hero-left::before{
+  content:'';position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='500'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.04 0.008' numOctaves='6' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0.4'/%3E%3C/filter%3E%3Crect width='800' height='500' filter='url(%23w)' opacity='0.13'/%3E%3C/svg%3E");
+  pointer-events:none;
+}
+.hero-left::after{content:'';position:absolute;inset:0;background:linear-gradient(to right,rgba(0,0,0,.28),transparent);pointer-events:none}
+.hero-content{position:relative;z-index:1}
+
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:7px;
+  font-family:'Lora',serif;font-size:.72rem;letter-spacing:2.5px;
+  text-transform:uppercase;color:var(--amber2);
+  margin-bottom:10px;
+  animation:fadeUp .6s ease both;
+}
+.hero-eyebrow::before,.hero-eyebrow::after{content:'';display:block;width:28px;height:1px;background:var(--amber2);opacity:.7}
+.hero-script{
+  font-family:'Dancing Script',cursive;font-size:2.1rem;
+  color:rgba(255,255,255,.9);line-height:1;margin-bottom:6px;
+  animation:fadeUp .65s .08s ease both;
+}
+.hero-h1{
+  font-family:'Abril Fatface',cursive;
+  font-size:clamp(2.6rem,4.5vw,4rem);
+  color:#fff;line-height:1;margin-bottom:8px;
+  text-shadow:0 3px 18px rgba(0,0,0,.5);
+  animation:fadeUp .65s .14s ease both;
+}
+.hero-h1 em{color:var(--gold);font-style:normal}
+.hero-rule{
+  display:flex;align-items:center;gap:10px;margin:14px 0 16px;
+  animation:fadeUp .65s .2s ease both;
+}
+.hero-rule::before,.hero-rule::after{content:'';flex:1;height:1px;background:linear-gradient(to right,var(--amber),transparent)}
+.hero-rule::after{background:linear-gradient(to left,var(--amber),transparent)}
+.hero-rule span{color:var(--gold);font-size:.85rem;white-space:nowrap}
+.hero-p{
+  font-size:.97rem;color:rgba(255,255,255,.75);margin-bottom:26px;line-height:1.8;
+  max-width:440px;font-family:'Lora',serif;
+  animation:fadeUp .65s .26s ease both;
+}
+.hero-btns{display:flex;gap:11px;flex-wrap:wrap;animation:fadeUp .65s .32s ease both}
+
+.hero-right{
+  background:linear-gradient(145deg,var(--green) 0%,#152E13 100%);
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:flex-end;padding:44px 40px;
+}
+.hero-right::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 80% at 50% 30%,rgba(74,122,66,.25),transparent);
+  pointer-events:none;
+}
+.hero-right::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.35),transparent);pointer-events:none}
+.hero-right-content{position:relative;z-index:1}
+.hero-right .hero-eyebrow{animation-delay:.15s}
+.hero-right .hero-script{animation-delay:.22s}
+.hero-right .hero-h1{font-size:clamp(1.9rem,3vw,2.7rem);animation-delay:.28s}
+.hero-price-card{
+  background:rgba(255,255,255,.09);backdrop-filter:blur(6px);
+  border:1.5px solid rgba(212,175,55,.35);border-radius:var(--r);
+  padding:14px 18px;margin-bottom:20px;display:inline-block;
+  animation:fadeUp .65s .34s ease both;
+}
+.hero-price-big{
+  font-family:'Abril Fatface',cursive;font-size:3.2rem;color:var(--gold);
+  line-height:1;display:block;
+}
+.hero-price-label{font-size:.68rem;color:rgba(255,255,255,.6);letter-spacing:2px;
+  text-transform:uppercase;font-family:'Lora',serif}
+.hero-btns-r{animation:fadeUp .65s .4s ease both}
+
+/* STATS */
+.stats-bar{
+  background:linear-gradient(180deg,var(--chalk) 0%,var(--chalk2) 100%);
+  border-top:3px solid var(--amber);border-bottom:3px solid var(--amber);
+  display:flex;justify-content:center;flex-wrap:wrap;
+  position:relative;overflow:hidden;
+}
+.stats-bar::before{
+  content:'';position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='200' filter='url(%23c)' opacity='0.07'/%3E%3C/svg%3E");
+  pointer-events:none;
+}
+.stat-item{padding:24px 52px;text-align:center;border-right:1px solid rgba(212,175,55,.12);position:relative;z-index:1}
+.stat-item:last-child{border-right:none}
+.stat-num{font-family:'Abril Fatface',cursive;font-size:2.3rem;color:var(--gold);line-height:1}
+.stat-label{font-family:'Lora',serif;font-size:.68rem;color:var(--aged);margin-top:5px;text-transform:uppercase;letter-spacing:1.5px}
+
+/* SECTIONS */
+.section{padding:70px 40px;position:relative}
+.container{max-width:1180px;margin:0 auto}
+.sec-chalk{background:linear-gradient(180deg,var(--chalk2) 0%,var(--chalk) 100%);border-top:3px solid var(--amber)}
+.sec-parch{background:var(--cream);border-top:4px solid var(--amber)}
+.sec-dark{background:linear-gradient(180deg,var(--wood2) 0%,var(--wood) 100%);border-top:3px solid var(--amber)}
+
+/* Section header */
+.sec-hd{text-align:center;margin-bottom:46px}
+.sec-eyebrow{
+  display:inline-block;font-family:'Dancing Script',cursive;font-size:1.75rem;
+  color:var(--amber);margin-bottom:4px;letter-spacing:.4px;
+}
+.sec-light .sec-eyebrow{color:var(--amber2)}
+.sec-h2{
+  font-family:'Abril Fatface',cursive;
+  font-size:clamp(1.7rem,3vw,2.4rem);
+  color:var(--body);margin-bottom:10px;line-height:1.15;
+}
+.sec-light .sec-h2{color:#fff}
+.sec-p{font-size:.94rem;color:var(--muted);max-width:500px;margin:0 auto;line-height:1.8;font-family:'Lora',serif}
+.sec-light .sec-p{color:rgba(255,255,255,.6)}
+.ornament{display:flex;align-items:center;gap:12px;max-width:340px;margin:14px auto 0}
+.ornament-line{flex:1;height:1px}
+.ornament-line.l{background:linear-gradient(to right,transparent,var(--amber))}
+.ornament-line.r{background:linear-gradient(to left,transparent,var(--amber))}
+.sec-light .ornament-line.l{background:linear-gradient(to right,transparent,var(--amber2))}
+.sec-light .ornament-line.r{background:linear-gradient(to left,transparent,var(--amber2))}
+.ornament-leaf{font-size:.85rem;color:var(--amber);line-height:1}
+.sec-light .ornament-leaf{color:var(--amber2)}
+
+/* TAB BAR */
+.tabs-wrap{
+  display:flex;justify-content:center;margin-bottom:38px;
+}
+.tabs-inner{
+  display:flex;gap:0;
+  background:rgba(255,255,255,.07);
+  border:1.5px solid rgba(212,175,55,.22);
+  border-radius:7px;padding:4px;
+}
+.tab-btn{
+  padding:9px 26px;border-radius:5px;border:none;
+  background:transparent;font-family:'Lora',serif;font-size:.86rem;font-weight:500;
+  color:rgba(255,255,255,.45);cursor:pointer;letter-spacing:.35px;
+  transition:color .25s,background .25s,transform .2s;
+  position:relative;overflow:hidden;
+}
+.tab-btn::after{
+  content:'';position:absolute;inset:0;border-radius:5px;
+  background:linear-gradient(180deg,var(--amber2) 0%,var(--amber) 100%);
+  opacity:0;transition:opacity .25s;z-index:0;
+}
+.tab-btn span{position:relative;z-index:1}
+.tab-btn.active{color:#fff}
+.tab-btn.active::after{opacity:1}
+.tab-btn:hover:not(.active){color:rgba(255,255,255,.8);background:rgba(255,255,255,.06)}
+
+/* PIG CARDS */
+.pigs-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:24px;
+}
+/* card */
+.pig-card{
+  background:#fff;border:2px solid var(--aged);border-radius:var(--r);
+  overflow:hidden;box-shadow:0 4px 18px rgba(0,0,0,.1),0 1px 4px rgba(0,0,0,.06);
+  transition:transform .28s cubic-bezier(.23,1,.32,1),box-shadow .28s;
+  animation:cardIn .5s ease both;will-change:transform;
+}
+.pig-card:hover{transform:translateY(-6px) scale(1.008);box-shadow:0 18px 44px rgba(0,0,0,.18)}
+@keyframes cardIn{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+
+/* image area */
+.pig-img-wrap{
+  position:relative;height:215px;overflow:hidden;
+  background:linear-gradient(160deg,var(--wood2),var(--chalk));
+}
+.pig-img-wrap img{
+  width:100%;height:100%;object-fit:cover;
+  display:block;transition:transform .6s cubic-bezier(.23,1,.32,1);
+}
+.pig-card:hover .pig-img-wrap img{transform:scale(1.07)}
+.pig-img-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to bottom,rgba(0,0,0,.04) 30%,rgba(0,0,0,.62) 100%);
+}
+.pig-img-fallback{
+  width:100%;height:100%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Abril Fatface',cursive;font-size:1.1rem;letter-spacing:1px;
+  color:rgba(255,255,255,.55);
+  background:linear-gradient(160deg,var(--wood2),var(--chalk));
+  flex-direction:column;gap:6px;
+}
+.pig-img-fallback svg{opacity:.35}
+
+/* breed pill badge - bottom left of image */
+.pig-img-breed{
+  position:absolute;bottom:10px;left:12px;
+  font-family:'Lora',serif;font-size:.65rem;font-weight:600;
+  letter-spacing:.8px;text-transform:uppercase;
+  padding:4px 11px;border-radius:20px;
+  color:#fff;
+  backdrop-filter:blur(4px);
+  box-shadow:0 2px 8px rgba(0,0,0,.35);
+}
+/* top right status badge */
+.pig-status{
+  position:absolute;top:12px;right:12px;
+  font-family:'Lora',serif;font-size:.62rem;font-weight:600;
+  letter-spacing:.7px;text-transform:uppercase;
+  padding:4px 10px;border-radius:20px;
+  box-shadow:0 2px 8px rgba(0,0,0,.3);
+}
+.status-avail{background:rgba(45,90,39,.85);color:#a8ffa0}
+.status-featured{background:rgba(212,175,55,.9);color:var(--wood)}
+.status-breeder{background:rgba(139,26,26,.85);color:#ffa8a8}
+.status-new{background:rgba(200,134,10,.88);color:#fff}
+
+/* card body */
+.pig-body{padding:16px 18px 0}
+.pig-name{font-family:'Playfair Display',serif;font-size:1.12rem;font-weight:700;color:var(--body);line-height:1.25}
+.pig-breed-label{font-family:'Lora',serif;font-size:.68rem;color:var(--amber);font-weight:600;text-transform:uppercase;letter-spacing:.9px;margin-top:3px}
+.pig-meta{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:13px 0}
+.meta-it{
+  background:var(--cream);border:1px solid var(--aged);border-radius:5px;padding:7px 11px;
+}
+.meta-label{font-family:'Lora',serif;font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+.meta-val{font-family:'Playfair Display',serif;font-size:.88rem;font-weight:600;color:var(--body);margin-top:1px}
+.pig-desc{font-family:'Lora',serif;font-size:.82rem;color:var(--muted);line-height:1.7;margin-bottom:12px}
+
+/* price ribbon */
+.pig-price-bar{
+  background:linear-gradient(135deg,var(--amber) 0%,var(--amber2) 100%);
+  padding:11px 18px;display:flex;justify-content:space-between;align-items:center;
+  border-top:2px solid var(--gold);
+}
+.pig-price{font-family:'Abril Fatface',cursive;font-size:1.5rem;color:#fff;line-height:1}
+.pig-price-info{font-family:'Lora',serif;font-size:.73rem;color:rgba(255,255,255,.75);text-align:right}
+
+/* card footer */
+.pig-foot{
+  padding:12px 18px;background:var(--parch);border-top:1px solid var(--aged);
+  display:flex;gap:8px;
+}
+.pig-foot .btn{flex:1;justify-content:center}
+
+/* SUPPLEMENTS */
+.supp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(225px,1fr));gap:18px}
+.supp-card{
+  background:#fff;border:1.5px solid var(--aged);border-radius:var(--r);
+  padding:26px 20px;text-align:center;
+  transition:transform .22s,box-shadow .22s,border-color .22s;
+  position:relative;overflow:hidden;
+}
+.supp-card::before{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--amber),var(--gold));
+  transform:scaleX(0);transform-origin:left;transition:transform .3s;
+}
+.supp-card:hover{transform:translateY(-5px);box-shadow:0 12px 30px rgba(0,0,0,.12);border-color:var(--amber)}
+.supp-card:hover::before{transform:scaleX(1)}
+.supp-icon{font-size:2.6rem;margin-bottom:11px;display:block}
+.supp-name{font-family:'Playfair Display',serif;font-weight:700;color:var(--body);margin-bottom:8px;font-size:1rem}
+.supp-desc{font-size:.83rem;color:var(--muted);line-height:1.7;font-family:'Lora',serif}
+
+/* CONTACT */
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:54px;align-items:start}
+.contact-script{font-family:'Dancing Script',cursive;font-size:2.3rem;color:var(--gold);margin-bottom:5px}
+.contact-sub{font-size:.93rem;color:rgba(255,255,255,.6);line-height:1.8;margin-bottom:28px;font-family:'Lora',serif}
+.contact-row{display:flex;align-items:flex-start;gap:14px;margin-bottom:18px}
+.ci{
+  width:44px;height:44px;border-radius:8px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--green2),var(--green));
+  display:flex;align-items:center;justify-content:center;font-size:1.1rem;
+  box-shadow:0 3px 10px rgba(0,0,0,.3);
+}
+.ct strong{display:block;color:#fff;font-family:'Playfair Display',serif;font-size:.93rem;margin-bottom:2px}
+.ct span{font-size:.84rem;color:rgba(255,255,255,.5);font-family:'Lora',serif}
+.social-row{display:flex;gap:9px;margin-top:26px;flex-wrap:wrap}
+.soc-btn{
+  width:42px;height:42px;border-radius:8px;background:rgba(255,255,255,.07);
+  display:flex;align-items:center;justify-content:center;font-size:1.1rem;
+  text-decoration:none;color:#fff;border:1.5px solid rgba(255,255,255,.1);
+  transition:all .2s;
+}
+.soc-btn:hover{background:var(--amber);border-color:var(--amber);transform:translateY(-3px);box-shadow:0 6px 14px rgba(0,0,0,.3)}
+.map-box{
+  background:rgba(255,255,255,.05);border:2px solid rgba(212,175,55,.18);
+  border-radius:var(--r);height:310px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:10px;
+  color:rgba(255,255,255,.4);font-size:.88rem;font-family:'Lora',serif;
+  position:relative;overflow:hidden;
+  transition:border-color .2s;
+}
+.map-box:hover{border-color:rgba(212,175,55,.4)}
+.map-box::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at center,rgba(45,90,39,.2) 0%,transparent 70%);
+}
+.map-icon{font-size:2.8rem;display:block}
+
+/* MODALS */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(20,10,4,.7);backdrop-filter:blur(6px);
+  z-index:600;display:none;align-items:center;justify-content:center;padding:20px;
+}
+.modal-overlay.open{display:flex}
+.modal{
+  background:var(--cream);border-radius:12px;
+  max-width:560px;width:100%;max-height:92vh;overflow-y:auto;
+  box-shadow:0 32px 80px rgba(0,0,0,.5);border:2px solid var(--amber);
+  animation:modalUp .32s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes modalUp{from{transform:translateY(36px) scale(.97);opacity:0}to{transform:translateY(0) scale(1);opacity:1}}
+.modal-hd{
+  padding:22px 26px 16px;display:flex;align-items:center;
+  justify-content:space-between;border-bottom:1.5px solid var(--aged);
+}
+.modal-title{font-family:'Dancing Script',cursive;font-size:1.55rem;color:var(--amber);font-weight:600}
+.modal-x{
+  width:33px;height:33px;border-radius:6px;background:var(--parch);
+  border:1px solid var(--aged);cursor:pointer;font-size:.95rem;
+  display:flex;align-items:center;justify-content:center;color:var(--muted);transition:.2s;
+}
+.modal-x:hover{background:var(--amber);color:#fff;border-color:var(--amber)}
+.modal-body{padding:18px 26px 26px}
+
+/* Forms */
+.fg{margin-bottom:15px}
+.fl{display:block;font-family:'Lora',serif;font-size:.78rem;font-weight:600;
+  color:var(--wood2);margin-bottom:5px;letter-spacing:.6px;text-transform:uppercase}
+.fi,.fs,.ft{
+  width:100%;padding:10px 13px;border:1.5px solid var(--aged);border-radius:7px;
+  font-family:'Lora',serif;font-size:.9rem;color:var(--body);
+  background:#fff;transition:.2s;outline:none;
+}
+.fi:focus,.fs:focus,.ft:focus{border-color:var(--amber);box-shadow:0 0 0 3px rgba(200,134,10,.12)}
+.ft{resize:vertical;min-height:82px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-divider{border:none;border-top:1.5px dashed var(--aged);margin:16px 0}
+
+/* Pay options */
+.pay-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.pay-opt{
+  border:2px solid var(--aged);border-radius:8px;padding:14px 12px;
+  cursor:pointer;transition:.2s;text-align:center;background:#fff;
+}
+.pay-opt:hover,.pay-opt.sel{border-color:var(--amber);background:rgba(200,134,10,.07)}
+.pay-icon{font-size:1.55rem;margin-bottom:3px}
+.pay-label{font-family:'Playfair Display',serif;font-size:.88rem;font-weight:700;color:var(--body)}
+.pay-sub{font-size:.73rem;color:var(--muted);font-family:'Lora',serif}
+
+/* Price summary */
+.price-box{background:var(--parch);border:1.5px solid var(--aged);border-radius:8px;padding:15px;margin-bottom:14px}
+.pr{display:flex;justify-content:space-between;padding:4px 0;font-size:.87rem;font-family:'Lora',serif;color:var(--body)}
+.pr.total{
+  font-weight:700;font-size:1rem;border-top:2px solid var(--amber);
+  margin-top:8px;padding-top:10px;font-family:'Abril Fatface',cursive;color:var(--amber)
+}
+.pig-sum-wrap{
+  background:var(--parch);border:2px solid var(--aged);border-radius:8px;
+  padding:13px;margin-bottom:16px;display:flex;gap:13px;align-items:center;
+}
+.pig-sum-img{
+  width:60px;height:60px;border-radius:7px;overflow:hidden;flex-shrink:0;
+  background:linear-gradient(135deg,var(--wood2),var(--chalk));
+}
+.pig-sum-img img{width:100%;height:100%;object-fit:cover}
+
+/* Receipt */
+.receipt{text-align:center}
+.r-logo{font-family:'Abril Fatface',cursive;font-size:1.6rem;color:var(--amber);margin-bottom:2px;display:flex;align-items:center;justify-content:center;gap:10px}
+.r-sub{font-size:.77rem;color:var(--muted);margin-bottom:16px;font-family:'Lora',serif}
+.r-dash{border:none;border-top:2px dashed var(--aged);margin:13px 0}
+.r-row{display:flex;justify-content:space-between;padding:4px 0;font-size:.86rem;font-family:'Lora',serif;color:var(--body)}
+.r-row.bold{font-weight:700;font-family:'Playfair Display',serif}
+.r-stamp{
+  display:inline-block;border:2.5px solid var(--green);color:var(--green);
+  border-radius:6px;padding:7px 22px;font-size:.76rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:2px;margin-top:13px;font-family:'Lora',serif;
+}
+
+/* Admin */
+.admin-modal .modal{max-width:700px}
+#edit-pig-modal{z-index:700}
+.admin-tabs{display:flex;border-bottom:2px solid var(--aged);margin-bottom:20px}
+.at{
+  padding:9px 20px;border:none;background:none;font-family:'Lora',serif;
+  color:var(--muted);font-size:.83rem;cursor:pointer;transition:.2s;
+  border-bottom:2.5px solid transparent;margin-bottom:-2px;
+}
+.at.active{color:var(--amber);border-bottom-color:var(--amber);font-weight:600}
+.ap{display:none}.ap.active{display:block}
+
+.pal-item{
+  display:flex;align-items:center;gap:12px;padding:12px;
+  border:1.5px solid var(--aged);border-radius:7px;background:var(--parch);margin-bottom:9px;
+}
+.pal-thumb{
+  width:56px;height:56px;border-radius:6px;overflow:hidden;flex-shrink:0;
+  background:linear-gradient(135deg,var(--wood2),var(--chalk));
+}
+.pal-thumb img{width:100%;height:100%;object-fit:cover}
+.pal-info{flex:1}
+.pal-info strong{display:block;font-family:'Playfair Display',serif;font-size:.9rem;color:var(--body)}
+.pal-info span{font-size:.77rem;color:var(--muted);font-family:'Lora',serif}
+.pal-acts{display:flex;gap:6px}
+
+.upload-area{
+  border:2px dashed var(--aged);border-radius:10px;padding:30px;
+  text-align:center;cursor:pointer;transition:.2s;
+}
+.upload-area:hover{border-color:var(--amber);background:rgba(200,134,10,.05)}
+.upload-icon{font-size:2.4rem;display:block;margin-bottom:7px}
+
+/* ════════════════════════ FOOTER ═════════════════════════ */
+footer{
+  background:linear-gradient(180deg,var(--wood2) 0%,var(--wood) 100%);
+  border-top:4px solid var(--amber);
+  padding:36px 40px 26px;text-align:center;
+  position:relative;overflow:hidden;
+}
+footer::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(90deg,transparent 0,transparent 100px,rgba(255,255,255,.01) 100px,rgba(255,255,255,.01) 101px);
+  pointer-events:none;
+}
+.footer-logo{font-family:'Abril Fatface',cursive;font-size:1.6rem;color:var(--gold);display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:8px}
+.footer-p{font-family:'Lora',serif;font-size:.81rem;color:rgba(255,255,255,.38);line-height:1.7}
+footer a{color:var(--amber);text-decoration:none}
+footer a:hover{color:var(--gold)}
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:28px;right:28px;z-index:9000;
+  background:var(--wood2);color:#fff;
+  border-left:4px solid var(--amber);border-radius:8px;
+  padding:13px 18px;font-size:.87rem;max-width:310px;
+  box-shadow:0 8px 28px rgba(0,0,0,.4);
+  font-family:'Lora',serif;border:1px solid rgba(212,175,55,.3);
+  border-left:4px solid var(--amber);
+  transform:translateX(140%);
+  transition:transform .4s cubic-bezier(.34,1.56,.64,1);
+  display:flex;align-items:center;gap:9px;
+}
+.toast.show{transform:translateX(0)}
+
+/* SCROLL REVEAL */
+.rev{opacity:0;transform:translateY(26px);transition:opacity .6s ease,transform .6s ease}
+.rev-l{opacity:0;transform:translateX(-26px);transition:opacity .6s ease,transform .6s ease}
+.rev-r{opacity:0;transform:translateX(26px);transition:opacity .6s ease,transform .6s ease}
+.rev.on,.rev-l.on,.rev-r.on{opacity:1;transform:none}
+.d1{transition-delay:.08s}.d2{transition-delay:.16s}.d3{transition-delay:.24s}
+.d4{transition-delay:.32s}.d5{transition-delay:.40s}
+
+/* KEYFRAMES */
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+@keyframes shimmerGold{
+  0%{background-position:200% center}
+  100%{background-position:-200% center}
+}
+
+/* RESPONSIVE */
+@media(max-width:820px){
+  nav{padding:0 16px}
+  .nav-links,.nav-dd{display:none}
+  .hero{grid-template-columns:1fr;min-height:auto}
+  .hero-left,.hero-right{min-height:300px}
+  .contact-grid{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
+  .stat-item{padding:18px 26px}
+  .pigs-grid{grid-template-columns:1fr}
+  .pay-opts{grid-template-columns:1fr}
+  .section{padding:52px 20px}
+}
+@media print{
+  body > *{display:none!important}
+  #receipt-modal{display:flex!important;position:static}
+  .modal-overlay{background:none!important;position:static;display:block!important}
+  .modal{box-shadow:none;border:1px solid #ccc}
+  .receipt-acts,.modal-x{display:none!important}
+}
+</style>
+</head>
+<body>
+<div class="edge-frame"></div>
+
+<!-- ══════════════════════════════════════
+     NAVBAR
+══════════════════════════════════════ -->
+<nav>
+  <!-- SVG LOGO -->
+  <a class="logo-wrap" href="#">
+    <svg class="logo-svg-ring" width="46" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- outer ring -->
+      <circle cx="23" cy="23" r="21.5" stroke="#D4AF37" stroke-width="1.8"/>
+      <circle cx="23" cy="23" r="18.5" stroke="#C8860A" stroke-width=".7" stroke-dasharray="3 2.5"/>
+      <!-- green fill bg -->
+      <circle cx="23" cy="23" r="17.5" fill="#2D5A27"/>
+      <!-- pig head silhouette -->
+      <ellipse cx="23" cy="25" rx="9" ry="8" fill="#F5EDD6"/>
+      <!-- snout -->
+      <ellipse cx="23" cy="30" rx="5" ry="3.5" fill="#E8C89A"/>
+      <!-- nostrils -->
+      <circle cx="21.4" cy="30.2" r="1.1" fill="#C8860A"/>
+      <circle cx="24.6" cy="30.2" r="1.1" fill="#C8860A"/>
+      <!-- eyes -->
+      <circle cx="19.8" cy="24.5" r="1.5" fill="#3B1F0E"/>
+      <circle cx="26.2" cy="24.5" r="1.5" fill="#3B1F0E"/>
+      <circle cx="20.2" cy="24.1" r=".5" fill="#fff"/>
+      <circle cx="26.6" cy="24.1" r=".5" fill="#fff"/>
+      <!-- ears -->
+      <ellipse cx="15.5" cy="21" rx="3.5" ry="5" fill="#F5EDD6" transform="rotate(-20 15.5 21)"/>
+      <ellipse cx="30.5" cy="21" rx="3.5" ry="5" fill="#F5EDD6" transform="rotate(20 30.5 21)"/>
+      <ellipse cx="15.5" cy="20.5" rx="2" ry="3.2" fill="#E8C0B8" transform="rotate(-20 15.5 20.5)"/>
+      <ellipse cx="30.5" cy="20.5" rx="2" ry="3.2" fill="#E8C0B8" transform="rotate(20 30.5 20.5)"/>
+      <!-- banner text arc hint -->
+      <path d="M8 22 Q23 10 38 22" stroke="#D4AF37" stroke-width=".8" fill="none" opacity=".5"/>
+    </svg>
+    <div class="logo-text">
+      <span class="logo-name">PigMart</span>
+      <span class="logo-tag">Premium Farm Pigs</span>
+    </div>
+  </a>
+
+  <div class="nav-links">
+    <a href="#shop" class="active" onclick="document.getElementById('shop').scrollIntoView({behavior:'smooth'});return false;">Shop</a>
+    <div class="nav-dd">
+      <span class="nav-dd-toggle">Breeds <span class="nav-dd-arrow">▾</span></span>
+      <div class="ddmenu">
+        <a href="#shop" onclick="setFilter('All');document.getElementById('shop').scrollIntoView({behavior:'smooth'});return false;"><span>🌾</span> All Breeds</a>
+        <a href="#shop" onclick="setFilter('Landrace');document.getElementById('shop').scrollIntoView({behavior:'smooth'});return false;"><span>🐷</span> Landrace</a>
+        <a href="#shop" onclick="setFilter('Duroc');document.getElementById('shop').scrollIntoView({behavior:'smooth'});return false;"><span>🐷</span> Duroc</a>
+        <a href="#shop" onclick="setFilter('Yorkshire');document.getElementById('shop').scrollIntoView({behavior:'smooth'});return false;"><span>🐷</span> Yorkshire</a>
+        <a href="#shop" onclick="setFilter('Berkshire');document.getElementById('shop').scrollIntoView({behavior:'smooth'});return false;"><span>🐷</span> Berkshire</a>
+      </div>
+    </div>
+    <div class="nav-dd">
+      <span class="nav-dd-toggle">Info <span class="nav-dd-arrow">▾</span></span>
+      <div class="ddmenu">
+        <a href="#supplements" onclick="document.getElementById('supplements').scrollIntoView({behavior:'smooth'});return false;"><span>🌿</span> Supplements & Feed</a>
+        <a href="#contact" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'});return false;"><span>📍</span> Contact & Location</a>
+      </div>
+    </div>
+    <a href="#contact" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'});return false;">Contact</a>
+  </div>
+  <div style="display:flex;gap:9px">
+    <button class="btn btn-outline btn-sm" onclick="openAdm()">⚙ Admin</button>
+    <button class="btn btn-gold btn-sm" onclick="document.getElementById('shop').scrollIntoView({behavior:'smooth'})">Browse Pigs</button>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════
+     HERO
+══════════════════════════════════════ -->
+<section class="hero">
+  <!-- Left -->
+  <div class="hero-left">
+    <div class="hero-content">
+      <div class="hero-eyebrow"><span></span>Farm Fresh · Certified Healthy<span></span></div>
+      <div class="hero-script">Premium Heritage Breeds,</div>
+      <h1 class="hero-h1">Raised<br><em>Right</em></h1>
+      <div class="hero-rule"><span>✦ Since 2016 ✦</span></div>
+      <p class="hero-p">Select from our carefully raised purebred pigs. Every animal includes full health records, weight verification, and detailed breed information.</p>
+      <div class="hero-btns">
+        <button class="btn btn-gold" onclick="document.getElementById('shop').scrollIntoView({behavior:'smooth'})">🐷 Browse Pigs</button>
+        <button class="btn" style="background:transparent;color:#fff;border:2px solid rgba(255,255,255,.4)" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">📍 Find Us</button>
+      </div>
+    </div>
+  </div>
+  <!-- Right -->
+  <div class="hero-right">
+    <div class="hero-right-content">
+      <div class="hero-eyebrow" style="color:var(--amber2)"><span></span>Heritage Breeds<span></span></div>
+      <div class="hero-script" style="color:rgba(255,255,255,.88)">Berkshire, Duroc</div>
+      <h1 class="hero-h1">&amp; More<br><em style="color:var(--gold)">Available</em></h1>
+      <div class="hero-price-card">
+        <span class="hero-price-label">Starting From</span>
+        <span class="hero-price-big">₱5,000</span>
+        <span class="hero-price-label" style="margin-top:2px">Per Head</span>
+      </div>
+      <div class="hero-btns-r">
+        <button class="btn btn-gold" onclick="document.getElementById('shop').scrollIntoView({behavior:'smooth'})">Shop Now →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     STATS
+══════════════════════════════════════ -->
+<div class="stats-bar">
+  <div class="stat-item rev d1"><div class="stat-num" id="stat-pigs">200+</div><div class="stat-label" id="stat-pigs-label">Pigs Available</div></div>
+  <div class="stat-item rev d2"><div class="stat-num" id="stat-breeds">4</div><div class="stat-label" id="stat-breeds-label">Premium Breeds</div></div>
+  <div class="stat-item rev d3"><div class="stat-num" id="stat-years">8 yrs</div><div class="stat-label" id="stat-years-label">In Business</div></div>
+  <div class="stat-item rev d4"><div class="stat-num" id="stat-health">100%</div><div class="stat-label" id="stat-health-label">Health Certified</div></div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SHOP
+══════════════════════════════════════ -->
+<section id="shop" class="section sec-chalk">
+  <div class="container">
+    <div class="sec-hd sec-light rev">
+      <span class="sec-eyebrow">— Raised by Hand —</span>
+      <h2 class="sec-h2">Available Pigs</h2>
+      <p class="sec-p">Full breed details — weight, age, gender, diet, and supplements for every animal.</p>
+      <div class="ornament"><div class="ornament-line l"></div><span class="ornament-leaf">✦</span><div class="ornament-line r"></div></div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs-wrap rev">
+      <div class="tabs-inner" id="tabs">
+        <button class="tab-btn active" data-breed="All" onclick="handleTab(this)"><span>All Breeds</span></button>
+        <button class="tab-btn" data-breed="Landrace" onclick="handleTab(this)"><span>Landrace</span></button>
+        <button class="tab-btn" data-breed="Duroc" onclick="handleTab(this)"><span>Duroc</span></button>
+        <button class="tab-btn" data-breed="Yorkshire" onclick="handleTab(this)"><span>Yorkshire</span></button>
+        <button class="tab-btn" data-breed="Berkshire" onclick="handleTab(this)"><span>Berkshire</span></button>
+      </div>
+    </div>
+
+    <div class="pigs-grid" id="pigs-grid"></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     SUPPLEMENTS
+══════════════════════════════════════ -->
+<section id="supplements" class="section sec-parch">
+  <div class="container">
+    <div class="sec-hd rev">
+      <span class="sec-eyebrow">— What We Feed Them —</span>
+      <h2 class="sec-h2">Feed & Supplements</h2>
+      <p class="sec-p">Healthy pigs start with what they eat. Here's what we use on our farm every day.</p>
+      <div class="ornament"><div class="ornament-line l"></div><span class="ornament-leaf">✦</span><div class="ornament-line r"></div></div>
+    </div>
+    <div class="supp-grid">
+      <div class="supp-card rev d1"><span class="supp-icon">🌾</span><div class="supp-name">Corn & Soybean Meal</div><div class="supp-desc">Primary energy and protein base. Non-GMO certified blend for optimal muscle development and healthy weight.</div></div>
+      <div class="supp-card rev d2"><span class="supp-icon">🥬</span><div class="supp-name">Leafy Greens & Veggies</div><div class="supp-desc">Daily fresh kangkong, camote tops, and banana trunks for fiber and natural micronutrients.</div></div>
+      <div class="supp-card rev d3"><span class="supp-icon">🐟</span><div class="supp-name">Fish Meal Protein</div><div class="supp-desc">High-quality marine protein added weekly for lean mass growth and immune support throughout the year.</div></div>
+      <div class="supp-card rev d4"><span class="supp-icon">💊</span><div class="supp-name">Vitamin & Mineral Mix</div><div class="supp-desc">Prepared vitamin premix with iron, zinc, and selenium for complete herd health and vitality.</div></div>
+      <div class="supp-card rev d3"><span class="supp-icon">🌿</span><div class="supp-name">Herbal Supplements</div><div class="supp-desc">Moringa leaf powder 3× per week as natural immunity booster and anti-parasitic supplement.</div></div>
+      <div class="supp-card rev d4"><span class="supp-icon">💧</span><div class="supp-name">Electrolyte Water</div><div class="supp-desc">Fresh water with electrolyte supplementation, especially during warm months to prevent stress and dehydration.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     CONTACT
+══════════════════════════════════════ -->
+<section id="contact" class="section sec-dark">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="rev-l">
+        <div class="contact-script">Visit the Farm</div>
+        <p class="contact-sub">We're open 7 days a week. Come see the pigs yourself or reach us through any channel below.</p>
+        <div class="contact-row"><div class="ci">📍</div><div class="ct"><strong>Farm Location</strong><span>Tagbilaran, Bohol, Philippines</span></div></div>
+        <div class="contact-row"><div class="ci">📞</div><div class="ct"><strong>Phone / Viber</strong><span>+63 981 392 4497</span></div></div>
+        <div class="contact-row"><div class="ci">📧</div><div class="ct"><strong>Email</strong><span>orders@pigmart.ph</span></div></div>
+        <div class="contact-row"><div class="ci">🕐</div><div class="ct"><strong>Hours</strong><span>Monday – Sunday, 6:00 AM – 6:00 PM</span></div></div>
+
+      </div>
+      <div class="rev-r">
+        <div class="contact-script" style="font-size:1.8rem">Place a Request</div>
+        <p class="contact-sub">Fill in the form below and we'll get back to you as soon as possible.</p>
+        <div id="req-form">
+          <div class="form-row">
+            <div class="fg">
+              <label class="fl" style="color:rgba(255,255,255,.7)">Full Name *</label>
+              <input class="fi" id="req-name" placeholder="Juan dela Cruz" maxlength="60" oninput="clearReqErr('req-name')">
+              <div class="req-err" id="err-req-name"></div>
+            </div>
+            <div class="fg">
+              <label class="fl" style="color:rgba(255,255,255,.7)">Phone / Viber *</label>
+              <input class="fi" id="req-phone" placeholder="+63 912 345 6789" maxlength="16" inputmode="tel" oninput="formatPhone(this);clearReqErr('req-phone')">
+              <div style="font-size:.72rem;color:rgba(255,255,255,.45);margin-top:3px;font-family:'Lora',serif">Format: +63 9XX XXX XXXX (Philippine mobile)</div>
+              <div class="req-err" id="err-req-phone"></div>
+            </div>
+          </div>
+          <div class="fg">
+            <label class="fl" style="color:rgba(255,255,255,.7)">Email</label>
+            <input class="fi" id="req-email" placeholder="yourname@email.com" type="email" maxlength="80" oninput="clearReqErr('req-email')">
+            <div class="req-err" id="err-req-email"></div>
+          </div>
+          <div class="fg">
+            <label class="fl" style="color:rgba(255,255,255,.7)">Which Pig Would You Like? *</label>
+            <select class="fs" id="req-pig" onchange="clearReqErr('req-pig')"><option value="">-- Select a pig --</option></select>
+            <div class="req-err" id="err-req-pig"></div>
+          </div>
+          <div class="fg">
+            <label class="fl" style="color:rgba(255,255,255,.7)">Delivery Location *</label>
+            <input class="fi" id="req-location" placeholder="Street, Barangay, City, Province" maxlength="150" oninput="clearReqErr('req-location')">
+            <div class="req-err" id="err-req-location"></div>
+          </div>
+          <div class="fg"><label class="fl" style="color:rgba(255,255,255,.7)">Payment Method *</label>
+            <div class="pay-opts" style="margin-bottom:0">
+              <div class="pay-opt sel" id="req-pay-online" onclick="pickReqPay('gcash')">
+                <div class="pay-icon">💳</div><div class="pay-label">GCash / Online</div><div class="pay-sub">Digital payment</div>
+              </div>
+              <div class="pay-opt" id="req-pay-cod" onclick="pickReqPay('cod')">
+                <div class="pay-icon">💵</div><div class="pay-label">Cash on Delivery</div><div class="pay-sub">Pay upon arrival</div>
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-gold btn-wide" style="margin-top:6px" onclick="submitRequest()">📩 Submit Request</button>
+        </div>
+        <div id="req-success" style="display:none;text-align:center;padding:30px 0">
+          <div style="font-size:3rem;margin-bottom:12px">✅</div>
+          <div style="font-family:'Playfair Display',serif;font-size:1.2rem;color:#fff;margin-bottom:8px">Request Submitted!</div>
+          <div style="font-size:.88rem;color:rgba(255,255,255,.6);font-family:'Lora',serif">We've received your request and will contact you shortly.</div>
+          <button class="btn btn-outline btn-sm" style="margin-top:18px" onclick="resetRequest()">Send Another Request</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     FOOTER
+══════════════════════════════════════ -->
+<footer>
+  <div class="footer-logo">
+    <svg width="28" height="28" viewBox="0 0 46 46" fill="none"><circle cx="23" cy="23" r="21.5" stroke="#D4AF37" stroke-width="1.8"/><circle cx="23" cy="23" r="17.5" fill="#2D5A27"/><ellipse cx="23" cy="25" rx="9" ry="8" fill="#F5EDD6"/><ellipse cx="23" cy="30" rx="5" ry="3.5" fill="#E8C89A"/><circle cx="21.4" cy="30.2" r="1.1" fill="#C8860A"/><circle cx="24.6" cy="30.2" r="1.1" fill="#C8860A"/><circle cx="19.8" cy="24.5" r="1.5" fill="#3B1F0E"/><circle cx="26.2" cy="24.5" r="1.5" fill="#3B1F0E"/><circle cx="20.2" cy="24.1" r=".5" fill="#fff"/><circle cx="26.6" cy="24.1" r=".5" fill="#fff"/><ellipse cx="15.5" cy="21" rx="3.5" ry="5" fill="#F5EDD6" transform="rotate(-20 15.5 21)"/><ellipse cx="30.5" cy="21" rx="3.5" ry="5" fill="#F5EDD6" transform="rotate(20 30.5 21)"/></svg>
+    PigMart
+  </div>
+  <p class="footer-p">© 2025 <strong style="color:#fff">PigMart</strong> — Premium Heritage Farm Pigs · Tagbilaran, Bohol, Philippines</p>
+  <p class="footer-p" style="margin-top:6px"><a href="#" onclick="openAdm()">Admin Portal</a></p>
+</footer>
+
+<!-- ══════════════════════════════════════
+     PURCHASE MODAL
+══════════════════════════════════════ -->
+<div class="modal-overlay" id="purchase-modal">
+  <div class="modal">
+    <div class="modal-hd">
+      <span class="modal-title">🐷 Purchase Pig</span>
+      <button class="modal-x" onclick="closeMod('purchase-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="pig-sum-wrap">
+        <div class="pig-sum-img"><img id="pm-img" src="" alt=""></div>
+        <div>
+          <div id="pm-name" style="font-family:'Playfair Display',serif;font-weight:700;color:var(--body);font-size:1rem"></div>
+          <div id="pm-details" style="font-size:.82rem;color:var(--muted);font-family:'Lora',serif;margin-top:2px"></div>
+          <div id="pm-price" style="font-family:'Abril Fatface',cursive;color:var(--amber);font-size:1.1rem;margin-top:4px"></div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="fg"><label class="fl">Full Name</label><input class="fi" placeholder="Juan dela Cruz"></div>
+        <div class="fg"><label class="fl">Phone / Viber</label><input class="fi" placeholder="+63 912 ..."></div>
+      </div>
+      <div class="fg"><label class="fl">Delivery Address</label><input class="fi" placeholder="Street, Barangay, City, Province"></div>
+      <div class="fg"><label class="fl">Notes (optional)</label><textarea class="ft" placeholder="Delivery instructions or special requests..."></textarea></div>
+      <hr class="form-divider">
+      <div class="fl" style="margin-bottom:11px">Payment Method</div>
+      <div class="pay-opts">
+        <div class="pay-opt sel" onclick="pickPay(this,'online')">
+          <div class="pay-icon">💳</div>
+          <div class="pay-label">Pay Online</div>
+          <div class="pay-sub">GCash / Maya / Bank</div>
+        </div>
+        <div class="pay-opt" onclick="pickPay(this,'cod')">
+          <div class="pay-icon">💵</div>
+          <div class="pay-label">Cash on Delivery</div>
+          <div class="pay-sub">Pay upon arrival</div>
+        </div>
+      </div>
+      <div id="online-details">
+        <div class="fg">
+          <label class="fl">Payment Channel</label>
+          <select class="fs"><option>GCash</option><option>Maya</option><option>Bank Transfer (BDO)</option><option>Bank Transfer (BPI)</option></select>
+        </div>
+        <div class="fg"><label class="fl">Reference Number</label><input class="fi" placeholder="GCash / bank ref no."></div>
+      </div>
+      <div class="price-box">
+        <div class="pr"><span>Pig price</span><span id="s-price">₱0</span></div>
+        <div class="pr"><span>Delivery fee</span><span>₱500</span></div>
+        <div class="pr total"><span>TOTAL</span><span id="s-total">₱0</span></div>
+      </div>
+      <button class="btn btn-gold btn-wide" onclick="confirmOrder()">✓ Confirm Order & Get Receipt</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     RECEIPT MODAL
+══════════════════════════════════════ -->
+<div class="modal-overlay" id="receipt-modal">
+  <div class="modal" style="max-width:470px">
+    <div class="modal-hd">
+      <span class="modal-title">🧾 Order Receipt</span>
+      <button class="modal-x" onclick="closeMod('receipt-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="receipt">
+        <div class="r-logo">
+          <svg width="22" height="22" viewBox="0 0 46 46" fill="none"><circle cx="23" cy="23" r="21.5" stroke="#C8860A" stroke-width="1.8"/><circle cx="23" cy="23" r="17.5" fill="#2D5A27"/><ellipse cx="23" cy="25" rx="9" ry="8" fill="#F5EDD6"/><ellipse cx="23" cy="30" rx="5" ry="3.5" fill="#E8C89A"/><circle cx="21.4" cy="30.2" r="1.1" fill="#C8860A"/><circle cx="24.6" cy="30.2" r="1.1" fill="#C8860A"/><circle cx="19.8" cy="24.5" r="1.5" fill="#3B1F0E"/><circle cx="26.2" cy="24.5" r="1.5" fill="#3B1F0E"/></svg>
+          PigMart
+        </div>
+        <div class="r-sub">Tagbilaran, Bohol, Philippines · +63 981 392 4497</div>
+        <div class="r-dash"></div>
+        <div id="receipt-content"></div>
+        <div class="r-dash"></div>
+        <div class="r-stamp" id="receipt-stamp">PAID ONLINE ✓</div>
+        <div style="font-size:.74rem;color:var(--muted);margin-top:9px;font-family:'Lora',serif">Keep this receipt as proof of payment.</div>
+      </div>
+      <div class="receipt-acts" style="display:flex;gap:10px;justify-content:center;margin-top:18px">
+        <button class="btn btn-outline btn-sm" onclick="window.print()">🖨 Print Receipt</button>
+        <button class="btn btn-gold btn-sm" onclick="closeMod('receipt-modal')">Done</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     ADMIN LOGIN
+══════════════════════════════════════ -->
+<div class="modal-overlay" id="adm-login">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-hd">
+      <span class="modal-title">⚙ Admin Login</span>
+      <button class="modal-x" onclick="closeMod('adm-login')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="fg"><label class="fl">Username</label><input class="fi" id="au" placeholder="admin" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <div class="fg"><label class="fl">Password</label><input class="fi" type="password" id="ap" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button class="btn btn-gold btn-wide" onclick="doLogin()">Login to Admin Panel &rarr;</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay admin-modal" id="adm-panel">
+  <div class="modal" style="max-width:740px">
+    <div class="modal-hd">
+      <span class="modal-title">⚙ Admin Panel</span>
+      <button class="modal-x" onclick="closeMod('adm-panel')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="admin-tabs" style="flex-wrap:wrap;gap:2px">
+        <button class="at active" onclick="admTab(this,'adm-pigs')">🐷 Manage Pigs</button>
+        <button class="at" onclick="admTab(this,'adm-add')">➕ Add Pig</button>
+        <button class="at" onclick="admTab(this,'adm-orders')">📋 Requests</button>
+        <button class="at" onclick="admTab(this,'adm-database')">🗄 Database</button>
+        <button class="at" onclick="admTab(this,'adm-settings')">⚙ Settings</button>
+        <button class="at" onclick="admTab(this,'adm-account')">🔐 Account</button>
+      </div>
+
+      <!-- MANAGE PIGS -->
+      <div class="ap active" id="adm-pigs"><div id="adm-pig-list"></div></div>
+
+      <!-- ADD PIG -->
+      <div class="ap" id="adm-add">
+        <div class="form-row">
+          <div class="fg"><label class="fl">Pig Name / ID</label><input class="fi" id="n-name" placeholder="e.g. Piglet #042" maxlength="60"></div>
+          <div class="fg"><label class="fl">Breed</label><select class="fs" id="n-breed"><option>Landrace</option><option>Duroc</option><option>Yorkshire</option><option>Berkshire</option></select></div>
+        </div>
+        <div class="form-row">
+          <div class="fg"><label class="fl">Weight (kg)</label><input class="fi" id="n-wt" type="number" placeholder="80" min="1" max="999"></div>
+          <div class="fg"><label class="fl">Age</label><input class="fi" id="n-age" placeholder="6 months" maxlength="30"></div>
+        </div>
+        <div class="form-row">
+          <div class="fg"><label class="fl">Gender</label><select class="fs" id="n-gender"><option>Male (Boar)</option><option>Female (Gilt)</option><option>Female (Sow)</option><option>Castrated (Barrow)</option></select></div>
+          <div class="fg"><label class="fl">Size</label><select class="fs" id="n-size"><option>Small (20–50 kg)</option><option>Medium (51–90 kg)</option><option>Large (91–130 kg)</option><option>XL (130+ kg)</option></select></div>
+        </div>
+        <div class="fg"><label class="fl">Price (₱)</label><input class="fi" id="n-price" type="number" placeholder="8500" min="1" max="9999999"></div>
+        <div class="fg"><label class="fl">Description</label><textarea class="ft" id="n-desc" placeholder="Briefly describe this pig..." maxlength="300"></textarea><div style="font-size:.72rem;color:var(--muted);text-align:right;margin-top:3px" id="n-desc-count">0 / 300</div></div>
+        <div class="upload-area" id="n-upload-area" onclick="document.getElementById('n-img').click()">
+          <span class="upload-icon">📷</span>
+          <div style="font-family:'Playfair Display',serif;font-weight:600;color:var(--body)">Upload Pig Photo</div>
+          <div style="font-size:.78rem;color:var(--muted)">Click to browse — JPG, PNG</div>
+          <input type="file" id="n-img" accept="image/*" style="display:none" onchange="prevImg(this,'img-prev','img-prev-img','n-upload-area')">
+        </div>
+        <div id="img-prev" style="display:none;margin-top:11px"><img id="img-prev-img" style="width:100%;border-radius:8px;max-height:170px;object-fit:cover" src="" alt=""></div>
+        <button class="btn btn-gold btn-wide" style="margin-top:16px" onclick="addPig()">+ Add Pig to Listing</button>
+      </div>
+
+      <!-- REQUESTS -->
+      <div class="ap" id="adm-orders">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <div style="font-family:'Playfair Display',serif;font-weight:700;color:var(--body)">Customer Requests</div>
+          <span id="adm-req-count" style="font-size:.78rem;color:var(--muted);font-family:'Lora',serif"></span>
+        </div>
+        <div id="adm-orders-list"><div style="text-align:center;padding:30px;color:var(--muted);font-family:'Lora',serif;font-size:.88rem">No requests yet.</div></div>
+      </div>
+
+      <!-- DATABASE -->
+      <div class="ap" id="adm-database">
+        <div style="font-family:'Playfair Display',serif;font-weight:700;color:var(--body);margin-bottom:4px">🗄 Full Database View</div>
+        <p style="font-size:.8rem;color:var(--muted);font-family:'Lora',serif;margin-bottom:16px">All confirmed customer requests are stored here. Use the ✕ button to permanently remove a record.</p>
+        <div style="overflow-x:auto">
+          <table id="db-table" style="width:100%;border-collapse:collapse;font-family:'Lora',serif;font-size:.8rem">
+            <thead>
+              <tr style="background:var(--wood2);color:#fff">
+                <th style="padding:9px 10px;text-align:left;border-radius:6px 0 0 0">#</th>
+                <th style="padding:9px 10px;text-align:left">Name</th>
+                <th style="padding:9px 10px;text-align:left">Phone</th>
+                <th style="padding:9px 10px;text-align:left">Email</th>
+                <th style="padding:9px 10px;text-align:left">Pig</th>
+                <th style="padding:9px 10px;text-align:left">Location</th>
+                <th style="padding:9px 10px;text-align:left">Payment</th>
+                <th style="padding:9px 10px;text-align:left">Date</th>
+                <th style="padding:9px 10px;text-align:left;border-radius:0 6px 0 0">Delete</th>
+              </tr>
+            </thead>
+            <tbody id="db-tbody"></tbody>
+          </table>
+          <div id="db-empty" style="text-align:center;padding:30px;color:var(--muted);font-size:.88rem">No requests in database yet.</div>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="ap" id="adm-settings">
+        <div class="fg"><label class="fl">Farm Name</label><input class="fi" id="s-farm-name" value="PigMart" maxlength="60"></div>
+        <div class="fg"><label class="fl">Phone / Viber</label><input class="fi" id="s-phone" value="+63 981 392 4497" maxlength="20"></div>
+        <div class="fg"><label class="fl">Email</label><input class="fi" id="s-email" value="orders@pigmart.ph" maxlength="80" type="email"></div>
+        <div class="fg"><label class="fl">Farm Location / Address</label><input class="fi" id="s-address" value="Tagbilaran, Bohol, Philippines" maxlength="120"></div>
+        <div class="fg"><label class="fl">Business Hours</label><input class="fi" id="s-hours" value="Monday – Sunday, 6:00 AM – 6:00 PM" maxlength="80"></div>
+        <div class="fg"><label class="fl">Delivery Fee (₱)</label><input class="fi" type="number" id="s-delivery-fee" value="500" min="0" max="99999"></div>
+        <div class="fg"><label class="fl">Hero Starting Price (₱)</label><input class="fi" type="number" id="s-start-price" value="5000" min="0"></div>
+        <div class="fg"><label class="fl">Years in Business / Tagline</label><input class="fi" id="s-tagline" value="Since 2016" maxlength="40"></div>
+        <hr class="form-divider">
+        <div style="font-family:'Playfair Display',serif;font-weight:700;color:var(--body);margin-bottom:12px;font-size:.95rem">📊 Stats Bar</div>
+        <div class="form-row">
+          <div class="fg"><label class="fl">Stat 1 — Number</label><input class="fi" id="s-stat1-num" value="200+" maxlength="20" placeholder="200+"></div>
+          <div class="fg"><label class="fl">Stat 1 — Label</label><input class="fi" id="s-stat1-lbl" value="Pigs Available" maxlength="30" placeholder="Pigs Available"></div>
+        </div>
+        <div class="form-row">
+          <div class="fg"><label class="fl">Stat 2 — Number</label><input class="fi" id="s-stat2-num" value="4" maxlength="20" placeholder="4"></div>
+          <div class="fg"><label class="fl">Stat 2 — Label</label><input class="fi" id="s-stat2-lbl" value="Premium Breeds" maxlength="30" placeholder="Premium Breeds"></div>
+        </div>
+        <div class="form-row">
+          <div class="fg"><label class="fl">Stat 3 — Number</label><input class="fi" id="s-stat3-num" value="8 yrs" maxlength="20" placeholder="8 yrs"></div>
+          <div class="fg"><label class="fl">Stat 3 — Label</label><input class="fi" id="s-stat3-lbl" value="In Business" maxlength="30" placeholder="In Business"></div>
+        </div>
+        <div class="form-row">
+          <div class="fg"><label class="fl">Stat 4 — Number</label><input class="fi" id="s-stat4-num" value="100%" maxlength="20" placeholder="100%"></div>
+          <div class="fg"><label class="fl">Stat 4 — Label</label><input class="fi" id="s-stat4-lbl" value="Health Certified" maxlength="30" placeholder="Health Certified"></div>
+        </div>
+        <button class="btn btn-gold btn-wide" onclick="saveSettings()">💾 Save All Settings</button>
+      </div>
+
+      <!-- ACCOUNT -->
+      <div class="ap" id="adm-account">
+        <div style="font-family:'Playfair Display',serif;font-weight:700;color:var(--body);margin-bottom:16px">Change Admin Credentials</div>
+        <div style="background:var(--parch);border:1.5px solid var(--aged);border-radius:8px;padding:16px;margin-bottom:18px">
+          <div style="font-size:.8rem;color:var(--muted);font-family:'Lora',serif">Logged in as: <strong id="cur-username-display" style="color:var(--body)">admin</strong></div>
+        </div>
+        <div class="fg"><label class="fl">Current Password</label><input class="fi" type="password" id="acc-cur-pass" placeholder="Enter current password"></div>
+        <hr class="form-divider">
+        <div class="fg"><label class="fl">New Username</label><input class="fi" id="acc-new-user" placeholder="Leave blank to keep current" maxlength="30"></div>
+        <div class="fg"><label class="fl">New Password</label><input class="fi" type="password" id="acc-new-pass" placeholder="Leave blank to keep current" maxlength="50"></div>
+        <div class="fg"><label class="fl">Confirm New Password</label><input class="fi" type="password" id="acc-confirm-pass" placeholder="Repeat new password" maxlength="50"></div>
+        <div id="acc-error" style="display:none;background:#FEE2E2;color:#DC2626;border-radius:6px;padding:10px 13px;font-size:.83rem;font-family:'Lora',serif;margin-bottom:12px"></div>
+        <button class="btn btn-gold btn-wide" onclick="changeCredentials()">🔐 Update Credentials</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- EDIT PIG MODAL -->
+<div class="modal-overlay" id="edit-pig-modal">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-hd">
+      <span class="modal-title">✏ Edit Pig</span>
+      <button class="modal-x" onclick="closeMod('edit-pig-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="e-id">
+      <div class="form-row">
+        <div class="fg"><label class="fl">Pig Name / ID</label><input class="fi" id="e-name" maxlength="60"></div>
+        <div class="fg"><label class="fl">Breed</label><select class="fs" id="e-breed"><option>Landrace</option><option>Duroc</option><option>Yorkshire</option><option>Berkshire</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="fg"><label class="fl">Weight (kg)</label><input class="fi" id="e-wt" type="number" min="1" max="999"></div>
+        <div class="fg"><label class="fl">Age</label><input class="fi" id="e-age" maxlength="30"></div>
+      </div>
+      <div class="form-row">
+        <div class="fg"><label class="fl">Gender</label><select class="fs" id="e-gender"><option>Male (Boar)</option><option>Female (Gilt)</option><option>Female (Sow)</option><option>Castrated (Barrow)</option></select></div>
+        <div class="fg"><label class="fl">Size</label><select class="fs" id="e-size"><option>Small (20–50 kg)</option><option>Medium (51–90 kg)</option><option>Large (91–130 kg)</option><option>XL (130+ kg)</option></select></div>
+      </div>
+      <div class="fg"><label class="fl">Price (₱)</label><input class="fi" id="e-price" type="number" min="1" max="9999999"></div>
+      <div class="fg"><label class="fl">Description</label><textarea class="ft" id="e-desc" maxlength="300"></textarea></div>
+      <div class="upload-area" id="e-upload-area" onclick="document.getElementById('e-img').click()">
+        <span class="upload-icon">📷</span>
+        <div style="font-family:'Playfair Display',serif;font-weight:600;color:var(--body)" id="e-upload-label">Change Photo</div>
+        <div style="font-size:.78rem;color:var(--muted)">Click to browse — JPG, PNG</div>
+        <input type="file" id="e-img" accept="image/*" style="display:none" onchange="prevImg(this,'e-img-prev','e-img-prev-img','e-upload-area')">
+      </div>
+      <div id="e-img-prev" style="display:none;margin-top:11px"><img id="e-img-prev-img" style="width:100%;border-radius:8px;max-height:170px;object-fit:cover" src="" alt=""></div>
+      <button class="btn btn-gold btn-wide" style="margin-top:16px" onclick="saveEditPig()">💾 Save Changes</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast-el"><span id="toast-icon"></span><span id="toast-msg"></span></div>
+
+<!-- ══════════════════════════════════════
+     SCRIPTS
+══════════════════════════════════════ -->
+<script>
+/* ── ADMIN CREDENTIALS STORE ── */
+var ADMIN_TOKEN = '';
+var ADMIN_USERNAME = '';
+
+/* ── BREED IMAGE MAP ── */
+/* Using Wikimedia Commons direct URLs for each breed */
+var BREED_IMGS = {
+  'Landrace': 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Landrace_pigs.jpg/800px-Landrace_pigs.jpg',
+  'Duroc':    'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Duroc_%28pig%29.jpg/800px-Duroc_%28pig%29.jpg',
+  'Yorkshire':'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Yorkshire_Pig.jpg/800px-Yorkshire_Pig.jpg',
+  'Berkshire':'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/BerkshireSow.jpg/800px-BerkshireSow.jpg'
+};
+
+/* Fallback gradient colors per breed */
+var BREED_COLORS = {
+  'Landrace':'linear-gradient(160deg,#a8836a,#5C3317)',
+  'Duroc':   'linear-gradient(160deg,#8B3A1A,#2A1008)',
+  'Yorkshire':'linear-gradient(160deg,#D4C4A0,#7B6040)',
+  'Berkshire':'linear-gradient(160deg,#2A2A2A,#1A1A1A)'
+};
+
+var BREED_PILL_COLOR = {
+  'Landrace':'#6B4423', 'Duroc':'#7B2010', 'Yorkshire':'#7A6040', 'Berkshire':'#222'
+};
+
+/* ── PIG DATA ── */
+var pigs = [
+  {id:1, name:'Porky #001',  breed:'Landrace', wt:85,  age:'6 months',   gender:'Male (Boar)',      size:'Medium', price:8500,  badge:'Available', badgeCls:'status-avail',
+   desc:'Well-proportioned Landrace boar with excellent feed conversion. Calm temperament, ready for breeding or market.'},
+  {id:2, name:'Bella #002',  breed:'Yorkshire', wt:62, age:'4.5 months', gender:'Female (Gilt)',     size:'Medium', price:6800,  badge:'Available', badgeCls:'status-avail',
+   desc:'Healthy Yorkshire gilt, pale pink coat, long body. Raised on corn-soy diet with daily vitamin supplements.'},
+  {id:3, name:'Duke #003',   breed:'Duroc',    wt:110, age:'8 months',   gender:'Male (Boar)',      size:'Large',  price:13500, badge:'Featured',  badgeCls:'status-featured',
+   desc:'Prize Duroc boar — deep red coat, muscular build, high ADG. Parents from champion bloodline.'},
+  {id:4, name:'Rosie #004',  breed:'Berkshire', wt:78, age:'5.5 months', gender:'Female (Gilt)',     size:'Medium', price:9200,  badge:'Available', badgeCls:'status-avail',
+   desc:'Black Berkshire gilt with signature white points. Premium pork quality, known for marbling and rich flavor.'},
+  {id:5, name:'Benny #005',  breed:'Landrace', wt:45,  age:'3 months',   gender:'Castrated (Barrow)',size:'Small',  price:5000,  badge:'Available', badgeCls:'status-avail',
+   desc:'Young Landrace barrow, ideal for small backyard raising. Very tame and easy to handle.'},
+  {id:6, name:'Mama Sue #006',breed:'Yorkshire',wt:142,age:'2 years',    gender:'Female (Sow)',     size:'XL',     price:18000, badge:'Breeder',   badgeCls:'status-breeder',
+   desc:'Proven Yorkshire sow, 4 successful farrowings. Average litter of 12 piglets. Excellent maternal instincts.'},
+];
+
+var currentPig = null, currentPay = 'online';
+
+/* ── IMAGE HELPER ── */
+function breedImg(breed){return BREED_IMGS[breed]||'';}
+
+function imgHtml(breed, h, customUrl){
+  var url = customUrl || breedImg(breed);
+  var color = BREED_COLORS[breed]||'linear-gradient(160deg,#5C3317,#1C2318)';
+  return url
+    ? '<img src="'+url+'" alt="'+breed+' pig" style="height:'+h+'px;width:100%;object-fit:cover;display:block" '
+      +'onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">'
+      +'<div class="pig-img-fallback" style="display:none;height:'+h+'px;background:'+color+'">'
+      +breedSvg(breed)+'<span style="font-size:.78rem;letter-spacing:1px">'+breed.toUpperCase()+'</span></div>'
+    : '<div class="pig-img-fallback" style="height:'+h+'px;background:'+color+'">'+breedSvg(breed)+'<span style="font-size:.78rem;letter-spacing:1px">'+breed.toUpperCase()+'</span></div>';
+}
+
+function breedSvg(breed){
+  /* simple stylized pig SVG per breed */
+  var c = breed==='Berkshire'?'#555':breed==='Duroc'?'#c26040':breed==='Yorkshire'?'#f0ddc0':'#e0c0a0';
+  return '<svg width="70" height="50" viewBox="0 0 70 50" xmlns="http://www.w3.org/2000/svg" opacity=".55">'
+    +'<ellipse cx="38" cy="30" rx="22" ry="15" fill="'+c+'"/>'
+    +'<circle cx="62" cy="26" r="11" fill="'+c+'"/>'
+    +'<ellipse cx="67" cy="30" rx="5" ry="3.5" fill="'+c+'" opacity=".9"/>'
+    +'<circle cx="65.5" cy="30" r="1" fill="rgba(0,0,0,.5)"/><circle cx="68.5" cy="30" r="1" fill="rgba(0,0,0,.5)"/>'
+    +'<circle cx="59.5" cy="23" r="2" fill="rgba(0,0,0,.6)"/>'
+    +'<ellipse cx="58" cy="17" rx="3" ry="5" fill="'+c+'" transform="rotate(-15 58 17)"/>'
+    +'<ellipse cx="65" cy="17" rx="3" ry="5" fill="'+c+'" transform="rotate(15 65 17)"/>'
+    +'<path d="M16 40 Q14 50 12 48 Q14 46 16 44" fill="'+c+'"/>'
+    +'</svg>';
+}
+
+/* ── RENDER PIGS ── */
+function renderPigs(filter){
+  var grid = document.getElementById('pigs-grid');
+  var data = filter&&filter!=='All' ? pigs.filter(function(p){return p.breed===filter}) : pigs;
+
+  /* Fade out */
+  grid.style.transition = 'opacity .18s, transform .18s';
+  grid.style.opacity = '0'; grid.style.transform = 'translateY(8px)';
+
+  setTimeout(function(){
+    grid.innerHTML = data.map(function(p,i){
+      var pillBg = BREED_PILL_COLOR[p.breed]||'#333';
+      return '<div class="pig-card" style="animation-delay:'+(i*0.065)+'s">'
+        +'<div class="pig-img-wrap">'
+        +imgHtml(p.breed, 215, p.imageUrl)
+        +'<div class="pig-img-overlay"></div>'
+        +'<div class="pig-img-breed" style="background:'+pillBg+';opacity:.88">'+p.breed+'</div>'
+        +'<div class="pig-status '+p.badgeCls+'">'+p.badge+'</div>'
+        +'</div>'
+        +'<div class="pig-body">'
+        +'<div class="pig-name">'+p.name+'</div>'
+        +'<div class="pig-breed-label">'+p.breed+' · '+p.size+'</div>'
+        +'<div class="pig-meta">'
+        +'<div class="meta-it"><div class="meta-label">Weight</div><div class="meta-val">'+p.wt+' kg</div></div>'
+        +'<div class="meta-it"><div class="meta-label">Age</div><div class="meta-val">'+p.age+'</div></div>'
+        +'<div class="meta-it"><div class="meta-label">Gender</div><div class="meta-val">'+p.gender.split(' ')[0]+'</div></div>'
+        +'<div class="meta-it"><div class="meta-label">Size</div><div class="meta-val">'+p.size+'</div></div>'
+        +'</div>'
+        +'<p class="pig-desc">'+p.desc+'</p>'
+        +'</div>'
+        +'<div class="pig-price-bar">'
+        +'<div><div style="font-family:\'Lora\',serif;font-size:.7rem;color:rgba(255,255,255,.75);margin-bottom:1px">Per Head</div>'
+        +'<div class="pig-price">₱'+p.price.toLocaleString()+'</div></div>'
+        +'<div class="pig-price-info">'+p.wt+' kg<br>'+p.age+'</div>'
+        +'</div>'
+        +'<div class="pig-foot">'
+        +'<button class="btn btn-gold btn-wide" onclick="buyPig('+p.id+')">🛒 Buy Now</button>'
+        +'</div>'
+        +'</div>';
+    }).join('');
+
+    grid.style.opacity = '1'; grid.style.transform = 'translateY(0)';
+  }, 200);
+}
+
+/* ── TAB HANDLER ── */
+function handleTab(btn){
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active')});
+  btn.classList.add('active');
+  renderPigs(btn.dataset.breed);
+}
+function setFilter(breed){
+  document.querySelectorAll('.tab-btn').forEach(function(b){
+    b.classList.toggle('active', b.dataset.breed===breed);
+  });
+  renderPigs(breed);
+}
+
+/* ── VIEW / BUY ── */
+function viewPig(id){
+  var p=pigs.find(function(x){return x.id===id});
+  if(!p)return;
+  toast(p.name+' — '+p.wt+'kg '+p.breed+' · ₱'+p.price.toLocaleString(),'🐷');
+}
+
+function buyPig(id){
+  var p=pigs.find(function(x){return x.id===id});
+  if(!p)return;
+  /* Scroll to request form */
+  var target = document.getElementById('contact');
+  if(target) target.scrollIntoView({behavior:'smooth'});
+  /* Pre-select the pig in the dropdown after a short delay for scroll */
+  setTimeout(function(){
+    var sel = document.getElementById('req-pig');
+    if(sel){
+      for(var i=0;i<sel.options.length;i++){
+        if(sel.options[i].value === p.name || sel.options[i].text.indexOf(p.name) !== -1){
+          sel.selectedIndex = i;
+          clearReqErr('req-pig');
+          break;
+        }
+      }
+    }
+    /* Reset form to visible if success screen showing */
+    var form = document.getElementById('req-form');
+    var success = document.getElementById('req-success');
+    if(form) form.style.display='block';
+    if(success) success.style.display='none';
+    toast('Selected: '+p.name+' — fill in your details below!','🐷');
+  }, 600);
+}
+
+function pickPay(el,m){
+  document.querySelectorAll('.pay-opt').forEach(function(o){o.classList.remove('sel')});
+  el.classList.add('sel');currentPay=m;
+  document.getElementById('online-details').style.display=m==='online'?'block':'none';
+}
+
+function confirmOrder(){
+  if(!currentPig)return;
+  var ref='PM'+Date.now().toString().slice(-8);
+  var now=new Date();
+  var ds=now.toLocaleDateString('en-PH',{year:'numeric',month:'long',day:'numeric'});
+  var ts=now.toLocaleTimeString('en-PH',{hour:'2-digit',minute:'2-digit'});
+  var online=currentPay==='online';
+  document.getElementById('receipt-content').innerHTML=
+    '<div class="r-row"><span>Order Ref</span><span><strong>'+ref+'</strong></span></div>'
+    +'<div class="r-row"><span>Date</span><span>'+ds+'</span></div>'
+    +'<div class="r-row"><span>Time</span><span>'+ts+'</span></div>'
+    +'<div style="height:7px"></div>'
+    +'<div class="r-row bold"><span>'+currentPig.name+'</span><span>₱'+currentPig.price.toLocaleString()+'</span></div>'
+    +'<div class="r-row"><span>Breed</span><span>'+currentPig.breed+'</span></div>'
+    +'<div class="r-row"><span>Weight</span><span>'+currentPig.wt+' kg</span></div>'
+    +'<div class="r-row"><span>Gender</span><span>'+currentPig.gender+'</span></div>'
+    +'<div style="height:7px"></div>'
+    +'<div class="r-row"><span>Delivery Fee</span><span>₱'+DELIVERY_FEE.toLocaleString()+'</span></div>'
+    +'<div class="r-row bold" style="border-top:1.5px solid var(--aged);margin-top:6px;padding-top:8px"><span>TOTAL</span><span>₱'+(currentPig.price+DELIVERY_FEE).toLocaleString()+'</span></div>'
+    +'<div class="r-row"><span>Payment</span><span>'+(online?'Online (Digital)':'Cash on Delivery')+'</span></div>';
+  var stamp=document.getElementById('receipt-stamp');
+  stamp.textContent=online?'PAID ONLINE ✓':'CASH ON DELIVERY';
+  stamp.style.borderColor=online?'var(--green)':'var(--amber)';
+  stamp.style.color=online?'var(--green)':'var(--amber)';
+  closeMod('purchase-modal');
+  openMod('receipt-modal');
+}
+
+/* ── MODALS ── */
+function openMod(id){document.getElementById(id).classList.add('open')}
+function closeMod(id){document.getElementById(id).classList.remove('open')}
+
+document.querySelectorAll('.modal-overlay').forEach(function(m){
+  if(m.id==='adm-panel') return; /* admin panel only closes via X button */
+  m.addEventListener('click',function(e){if(e.target===m)m.classList.remove('open')});
+});
+
+/* ── ADMIN ── */
+function openAdm(){openMod('adm-login')}
+function doLogin(){
+  var u=document.getElementById('au').value.trim();
+  var p=document.getElementById('ap').value;
+  if(!u||!p){toast('Enter username and password','⚠');return;}
+  var loginBtn=document.querySelector('#adm-login .btn-gold');
+  if(loginBtn){loginBtn.disabled=true;loginBtn.textContent='Logging in...';}
+  apiPost('admin_login',{username:u,password:p},function(res){
+    if(loginBtn){loginBtn.disabled=false;loginBtn.textContent='Login to Admin Panel →';}
+    if(res.success){
+      ADMIN_TOKEN = res.token;
+      ADMIN_USERNAME = res.username;
+      closeMod('adm-login');
+      document.getElementById('au').value='';
+      document.getElementById('ap').value='';
+      buildAdminList();
+      buildAdminOrders();
+      buildDatabase();
+      document.getElementById('cur-username-display').textContent=ADMIN_USERNAME;
+      openMod('adm-panel');
+    } else {
+      toast(res.message||'Invalid credentials.','⚠');
+    }
+  }, function(){
+    if(loginBtn){loginBtn.disabled=false;loginBtn.textContent='Login to Admin Panel →';}
+    toast('Login failed — check your connection','⚠');
+  });
+}
+function buildAdminList(){
+  document.getElementById('adm-pig-list').innerHTML=pigs.map(function(p){
+    var thumb = p.imageUrl
+      ? '<img src="'+p.imageUrl+'" style="width:56px;height:56px;object-fit:cover;border-radius:6px;display:block">'
+      : imgHtml(p.breed,56);
+    return '<div class="pal-item">'
+      +'<div class="pal-thumb">'+thumb+'</div>'
+      +'<div class="pal-info"><strong>'+p.name+'</strong><span>'+p.breed+' · '+p.wt+'kg · ₱'+p.price.toLocaleString()+'</span></div>'
+      +'<div class="pal-acts">'
+      +'<button class="btn btn-outline btn-sm" onclick="editPig('+p.id+')">Edit</button>'
+      +'<button class="btn btn-sm" style="background:#FEE2E2;color:#DC2626;border:none" onclick="delPig('+p.id+')">Del</button>'
+      +'</div>'
+      +'</div>';
+  }).join('');
+}
+/* API CONFIG — points to the live database */
+var API = 'https://pigmartsamar.infinityfreeapp.com/api.php';
+
+var SILENT_LOAD = false;
+
+function apiPost(action, data, onSuccess, onError){
+  fetch(API+'?action='+action, {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(data)
+  })
+  .then(function(r){return r.json();})
+  .then(function(res){
+    if(res.error){ if(onError) onError(res.error); else if(!SILENT_LOAD) toast('Error: '+res.error,'⚠'); }
+    else { if(onSuccess) onSuccess(res); }
+  })
+  .catch(function(e){ if(onError) onError(e); else if(!SILENT_LOAD) toast('Network error — check connection','⚠'); });
+}
+
+function apiGet(action, onSuccess, silent){
+  fetch(API+'?action='+action)
+  .then(function(r){return r.json();})
+  .then(function(res){ if(onSuccess) onSuccess(res); })
+  .catch(function(){ if(!silent && !SILENT_LOAD) toast('Network error — check connection','⚠'); });
+}
+
+/* ── LOAD REQUESTS FROM DB ── */
+function authData(extra){
+  var d = {token: ADMIN_TOKEN, username: ADMIN_USERNAME};
+  if(extra) Object.keys(extra).forEach(function(k){d[k]=extra[k];});
+  return d;
+}
+function saveRequests(){ /* handled by API now */ }
+
+/* ── LOAD PIGS FROM DB ── */
+function loadPigsFromDB(){
+  apiGet('get_pigs', function(data){
+    if(!Array.isArray(data)) return;
+    pigs = data.map(function(p){
+      return {
+        id: p.id,
+        name: p.name,
+        breed: p.breed,
+        wt: parseFloat(p.weight),
+        age: p.age,
+        gender: p.gender,
+        size: p.size,
+        price: parseFloat(p.price),
+        badge: p.badge,
+        badgeCls: p.badge_cls,
+        desc: p.description,
+        imageUrl: p.image_url || ''
+      };
+    });
+    renderPigs('All');
+    populateReqPigSelect();
+  });
+}
+
+function buildAdminOrders(){
+  var list = document.getElementById('adm-orders-list');
+  var count = document.getElementById('adm-req-count');
+  list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);font-family:\'Lora\',serif;font-size:.85rem">Loading...</div>';
+  apiPost('get_requests', authData(), function(data){
+    if(!Array.isArray(data)){list.innerHTML='<div style="text-align:center;padding:30px;color:var(--muted)">Could not load requests.</div>';return;}
+    if(count) count.textContent = data.length ? data.length+' pending' : '';
+    if(!data.length){list.innerHTML='<div style="text-align:center;padding:30px;color:var(--muted);font-family:\'Lora\',serif;font-size:.88rem">No pending requests.</div>';return;}
+    list.innerHTML = data.map(function(r){
+      var dateStr = r.submitted_at ? new Date(r.submitted_at).toLocaleDateString('en-PH',{month:'short',day:'numeric',year:'numeric'}) : '—';
+      return '<div style="border:1.5px solid var(--aged);border-radius:8px;padding:13px;margin-bottom:10px;background:var(--parch)">'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">'
+        +'<strong style="font-family:\'Playfair Display\',serif;color:var(--body)">'+r.customer_name+'</strong>'
+        +'<span style="font-size:.73rem;color:var(--muted);font-family:\'Lora\',serif">'+dateStr+'</span></div>'
+        +'<div style="font-size:.82rem;color:var(--muted);font-family:\'Lora\',serif;line-height:1.7">'
+        +'📞 '+r.phone+' &nbsp;|&nbsp; 📧 '+(r.email||'<em>no email</em>')+'<br>'
+        +'🐷 '+r.pig_requested+' &nbsp;|&nbsp; 📍 '+r.delivery_location+'<br>'
+        +'💳 '+r.payment_method
+        +'</div>'
+        +'<div style="display:flex;gap:8px;margin-top:9px">'
+        +'<button class="btn btn-sm btn-green" onclick="confirmRequest('+r.id+')">✓ Confirm</button>'
+        +'<button class="btn btn-sm" style="background:#FEE2E2;color:#DC2626;border:none" onclick="declineRequest('+r.id+')">✕ Decline</button>'
+        +'</div>'
+        +'</div>';
+    }).join('');
+  });
+}
+
+function confirmRequest(id){
+  apiPost('confirm_request',authData({id:id}),function(){
+    toast('Request confirmed & saved to database!','✓');
+    buildAdminOrders();
+    buildDatabase();
+  });
+}
+
+function declineRequest(id){
+  apiPost('decline_request',authData({id:id}),function(){
+    toast('Request declined and removed.','✕');
+    buildAdminOrders();
+  });
+}
+
+function buildDatabase(){
+  var tbody = document.getElementById('db-tbody');
+  var empty = document.getElementById('db-empty');
+  if(tbody) tbody.innerHTML='<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--muted);font-family:\'Lora\',serif">Loading...</td></tr>';
+  apiPost('get_confirmed', authData(), function(data){
+    if(!Array.isArray(data)||!data.length){
+      if(tbody) tbody.innerHTML='';
+      if(empty) empty.style.display='block';
+      return;
+    }
+    if(empty) empty.style.display='none';
+    tbody.innerHTML = data.map(function(r,i){
+      var dateStr = r.confirmed_at ? new Date(r.confirmed_at).toLocaleDateString('en-PH',{month:'short',day:'numeric',year:'numeric'}) : '—';
+      return '<tr style="background:'+(i%2===0?'var(--cream)':'var(--parch)')+';">'
+        +'<td style="padding:9px 10px;color:var(--muted);font-family:\'Lora\',serif">'+(i+1)+'</td>'
+        +'<td style="padding:9px 10px;font-weight:600;color:var(--body);font-family:\'Playfair Display\',serif">'+r.customer_name+'</td>'
+        +'<td style="padding:9px 10px;font-family:\'Lora\',serif">'+r.phone+'</td>'
+        +'<td style="padding:9px 10px;font-family:\'Lora\',serif">'+(r.email||'<span style="color:var(--muted)">—</span>')+'</td>'
+        +'<td style="padding:9px 10px;font-family:\'Lora\',serif">'+r.pig_requested+'</td>'
+        +'<td style="padding:9px 10px;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:\'Lora\',serif" title="'+r.delivery_location+'">'+r.delivery_location+'</td>'
+        +'<td style="padding:9px 10px;font-family:\'Lora\',serif">'+r.payment_method+'</td>'
+        +'<td style="padding:9px 10px;font-size:.76rem;color:var(--muted);font-family:\'Lora\',serif">'+dateStr+'</td>'
+        +'<td style="padding:9px 10px;white-space:nowrap">'
+        +'<button class="btn btn-sm" style="background:#FEE2E2;color:#DC2626;border:none;font-size:.7rem;padding:4px 9px" onclick="delConfirmed('+r.id+')">✕</button>'
+        +'</td>'
+        +'</tr>';
+    }).join('');
+  });
+}
+
+function delPig(id){
+  if(!confirm('Remove this pig from the listing?')) return;
+  apiPost('delete_pig',authData({id:id}),function(){
+    pigs = pigs.filter(function(p){return p.id!==id;});
+    buildAdminList();
+    renderPigs('All');
+    populateReqPigSelect();
+    toast('Pig removed from listing','🗑');
+  });
+}
+function editPig(id){
+  var p = pigs.find(function(x){return x.id===id;});
+  if(!p) return;
+  document.getElementById('e-id').value = id;
+  document.getElementById('e-name').value = p.name;
+  document.getElementById('e-wt').value = p.wt;
+  document.getElementById('e-age').value = p.age;
+  document.getElementById('e-price').value = p.price;
+  document.getElementById('e-desc').value = p.desc||'';
+  var bSel=document.getElementById('e-breed');
+  for(var i=0;i<bSel.options.length;i++) if(bSel.options[i].value===p.breed){bSel.selectedIndex=i;break;}
+  var gSel=document.getElementById('e-gender');
+  for(var i=0;i<gSel.options.length;i++) if(gSel.options[i].value===p.gender){gSel.selectedIndex=i;break;}
+  var sSel=document.getElementById('e-size');
+  for(var i=0;i<sSel.options.length;i++) if(sSel.options[i].value.startsWith(p.size)){sSel.selectedIndex=i;break;}
+  EDIT_IMG_BASE64='';
+  if(p.imageUrl){
+    document.getElementById('e-img-prev-img').src=p.imageUrl;
+    document.getElementById('e-img-prev').style.display='block';
+    document.getElementById('e-upload-label').textContent='Change Photo';
+  } else {
+    document.getElementById('e-img-prev').style.display='none';
+    document.getElementById('e-upload-label').textContent='Upload Photo';
+  }
+  openMod('edit-pig-modal');
+}
+function saveEditPig(){
+  var id=parseInt(document.getElementById('e-id').value);
+  var name=document.getElementById('e-name').value.trim();
+  var breed=document.getElementById('e-breed').value;
+  var wt=parseFloat(document.getElementById('e-wt').value);
+  var age=document.getElementById('e-age').value;
+  var gender=document.getElementById('e-gender').value;
+  var size=document.getElementById('e-size').value.split(' ')[0];
+  var price=parseFloat(document.getElementById('e-price').value);
+  var desc=document.getElementById('e-desc').value;
+  if(!name||!price){toast('Name and price are required','⚠');return;}
+  var p=pigs.find(function(x){return x.id===id;});
+  var imgUrl=EDIT_IMG_BASE64||(p?p.imageUrl:'');
+  apiPost('edit_pig',authData({id:id,name:name,breed:breed,wt:wt,age:age,gender:gender,size:size,price:price,desc:desc,image_url:imgUrl}),function(){
+    if(p){p.name=name;p.breed=breed;p.wt=wt;p.age=age;p.gender=gender;p.size=size;p.price=price;p.desc=desc;p.imageUrl=imgUrl;}
+    buildAdminList();renderPigs('All');populateReqPigSelect();
+    closeMod('edit-pig-modal');
+    EDIT_IMG_BASE64='';
+    toast(name+' updated!','✓');
+  });
+}
+function delRequest(i){ /* legacy */ }
+function delConfirmed(id){
+  apiPost('delete_confirmed',authData({id:id}),function(){
+    buildDatabase();toast('Record removed from database','🗑');
+  });
+}
+function admTab(btn,id){
+  document.querySelectorAll('.at').forEach(function(b){b.classList.remove('active')});
+  document.querySelectorAll('.ap').forEach(function(p){p.classList.remove('active')});
+  btn.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+function addPig(){
+  var name=document.getElementById('n-name').value.trim();
+  var breed=document.getElementById('n-breed').value;
+  var wt=parseFloat(document.getElementById('n-wt').value);
+  var age=document.getElementById('n-age').value;
+  var gender=document.getElementById('n-gender').value;
+  var size=document.getElementById('n-size').value.split(' ')[0];
+  var price=parseFloat(document.getElementById('n-price').value);
+  var desc=document.getElementById('n-desc').value;
+  if(!name||!wt||!price){toast('Please fill in required fields','⚠');return;}
+  var imgUrl=NEW_IMG_BASE64||'';
+  apiPost('add_pig',authData({name:name,breed:breed,wt:wt,age:age||'Unknown',gender:gender,size:size,price:price,desc:desc||'No description.',image_url:imgUrl}),function(res){
+    pigs.push({id:res.id,name:name,breed:breed,wt:wt,age:age||'Unknown',gender:gender,size:size,price:price,badge:'New',badgeCls:'status-new',desc:desc||'No description.',imageUrl:imgUrl});
+    buildAdminList();renderPigs('All');populateReqPigSelect();
+    document.getElementById('n-name').value='';
+    document.getElementById('n-price').value='';
+    document.getElementById('n-wt').value='';
+    document.getElementById('n-age').value='';
+    document.getElementById('n-desc').value='';
+    document.getElementById('img-prev').style.display='none';
+    NEW_IMG_BASE64='';
+    toast(name+' added to listing!','✓');
+  });
+}
+
+/* ── SAVE SETTINGS ── */
+function saveSettings(){
+  var farmName=document.getElementById('s-farm-name').value;
+  var phone=document.getElementById('s-phone').value;
+  var email=document.getElementById('s-email').value;
+  var address=document.getElementById('s-address').value;
+  var hours=document.getElementById('s-hours').value;
+  var deliveryFee=parseFloat(document.getElementById('s-delivery-fee').value)||500;
+  var startPrice=document.getElementById('s-start-price').value;
+  var tagline=document.getElementById('s-tagline').value;
+  /* Update contact section */
+  document.querySelectorAll('.ct').forEach(function(ct){
+    var strong=ct.querySelector('strong');
+    var span=ct.querySelector('span');
+    if(!strong||!span)return;
+    if(strong.textContent==='Farm Location'){span.textContent=address;}
+    if(strong.textContent==='Phone / Viber'){span.textContent=phone;}
+    if(strong.textContent==='Email'){span.textContent=email;}
+    if(strong.textContent==='Hours'){span.textContent=hours;}
+  });
+  /* Update hero price */
+  var heroPriceBig=document.querySelector('.hero-price-big');
+  if(heroPriceBig&&startPrice)heroPriceBig.textContent='₱'+parseFloat(startPrice).toLocaleString();
+  /* Update footer */
+  var footerP=document.querySelector('footer .footer-p');
+  if(footerP)footerP.innerHTML='© 2025 <strong style="color:#fff">'+farmName+'</strong> — Premium Heritage Farm Pigs · '+address;
+  /* Update receipt sub */
+  var rSub=document.querySelector('.r-sub');
+  if(rSub)rSub.textContent=address+' · '+phone;
+  /* Update hero rule tagline */
+  if(tagline){var heroRule=document.querySelector('.hero-rule span');if(heroRule)heroRule.textContent='✦ '+tagline+' ✦';}
+  DELIVERY_FEE=deliveryFee;
+  /* Update stat bar */
+  var s1n=document.getElementById('s-stat1-num').value; var s1l=document.getElementById('s-stat1-lbl').value;
+  var s2n=document.getElementById('s-stat2-num').value; var s2l=document.getElementById('s-stat2-lbl').value;
+  var s3n=document.getElementById('s-stat3-num').value; var s3l=document.getElementById('s-stat3-lbl').value;
+  var s4n=document.getElementById('s-stat4-num').value; var s4l=document.getElementById('s-stat4-lbl').value;
+  if(s1n){document.getElementById('stat-pigs').textContent=s1n;} if(s1l){document.getElementById('stat-pigs-label').textContent=s1l;}
+  if(s2n){document.getElementById('stat-breeds').textContent=s2n;} if(s2l){document.getElementById('stat-breeds-label').textContent=s2l;}
+  if(s3n){document.getElementById('stat-years').textContent=s3n;} if(s3l){document.getElementById('stat-years-label').textContent=s3l;}
+  if(s4n){document.getElementById('stat-health').textContent=s4n;} if(s4l){document.getElementById('stat-health-label').textContent=s4l;}
+  toast('Settings saved & applied!','✓');
+  apiPost('save_settings', authData({
+    farm_name:farmName, phone:phone, email:email, address:address,
+    hours:hours, delivery_fee:String(deliveryFee), start_price:String(startPrice), tagline:tagline,
+    stat1_num:s1n, stat1_lbl:s1l,
+    stat2_num:s2n, stat2_lbl:s2l,
+    stat3_num:s3n, stat3_lbl:s3l,
+    stat4_num:s4n, stat4_lbl:s4l
+  }), function(){ /* saved to DB */ });
+}
+var DELIVERY_FEE=500;
+
+/* ── REQUEST FORM ── */
+var requests=[];
+var confirmedRequests=[];
+var reqPayMode='gcash';
+function pickReqPay(m){
+  reqPayMode=m;
+  document.getElementById('req-pay-online').classList.toggle('sel',m==='gcash');
+  document.getElementById('req-pay-cod').classList.toggle('sel',m==='cod');
+}
+function populateReqPigSelect(){
+  var sel=document.getElementById('req-pig');
+  if(!sel)return;
+  sel.innerHTML='<option value="">-- Select a pig --</option>'
+    +pigs.map(function(p){return '<option value="'+p.name+' (₱'+p.price.toLocaleString()+')">'+p.name+' — '+p.breed+' · ₱'+p.price.toLocaleString()+'</option>';}).join('');
+}
+function submitRequest(){
+  var name=document.getElementById('req-name').value.trim();
+  var phone=document.getElementById('req-phone').value.trim();
+  var email=document.getElementById('req-email').value.trim();
+  var pig=document.getElementById('req-pig').value;
+  var location=document.getElementById('req-location').value.trim();
+  var valid=true;
+  if(!name){showReqErr('req-name','Please enter your full name.');valid=false;}
+  if(!phone){showReqErr('req-phone','Please enter your phone number.');valid=false;}
+  else if(!validatePhone(phone)){showReqErr('req-phone','Enter a valid PH mobile number (e.g. +63 912 345 6789).');valid=false;}
+  if(email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showReqErr('req-email','Enter a valid email address.');valid=false;}
+  if(!pig){showReqErr('req-pig','Please select a pig.');valid=false;}
+  if(!location){showReqErr('req-location','Please enter your delivery location.');valid=false;}
+  if(!valid) return;
+  var submitBtn = document.querySelector('#req-form .btn-gold');
+  if(submitBtn){submitBtn.disabled=true;submitBtn.textContent='Submitting...';}
+  apiPost('submit_request',{
+    name:name, phone:phone, email:email, pig:pig, location:location,
+    payment:reqPayMode==='gcash'?'GCash / Online':'Cash on Delivery'
+  }, function(){
+    document.getElementById('req-form').style.display='none';
+    document.getElementById('req-success').style.display='block';
+    toast('Request submitted! We\'ll contact you soon.','📩');
+  }, function(err){
+    if(submitBtn){submitBtn.disabled=false;submitBtn.textContent='Submit Request';}
+    toast('Failed to submit — check your connection','⚠');
+  });
+}
+function resetRequest(){
+  document.getElementById('req-name').value='';
+  document.getElementById('req-phone').value='';
+  document.getElementById('req-email').value='';
+  document.getElementById('req-pig').value='';
+  document.getElementById('req-location').value='';
+  reqPayMode='gcash';
+  document.getElementById('req-pay-online').classList.add('sel');
+  document.getElementById('req-pay-cod').classList.remove('sel');
+  document.getElementById('req-form').style.display='block';
+  document.getElementById('req-success').style.display='none';
+}
+var NEW_IMG_BASE64 = '';
+var EDIT_IMG_BASE64 = '';
+
+function prevImg(input, prevDivId, prevImgId, areaId){
+  if(input.files && input.files[0]){
+    var r = new FileReader();
+    r.onload = function(e){
+      var b64 = e.target.result;
+      document.getElementById(prevImgId).src = b64;
+      document.getElementById(prevDivId).style.display = 'block';
+      var area = document.getElementById(areaId);
+      if(area) area.querySelector('div') && (area.querySelector('[style*="Playfair"]').textContent = '✓ Photo selected');
+      if(prevDivId === 'img-prev') NEW_IMG_BASE64 = b64;
+      else EDIT_IMG_BASE64 = b64;
+    };
+    r.readAsDataURL(input.files[0]);
+  }
+}
+
+/* ── PHONE FORMATTER ── */
+function formatPhone(input){
+  /* Strip everything except digits and leading + */
+  var raw = input.value.replace(/[^\d]/g,'');
+  /* Limit to 11 digits (PH mobile: 09XXXXXXXXX) or 12 (639XXXXXXXXX) */
+  if(raw.length > 12) raw = raw.slice(0,12);
+  /* Format as +63 9XX XXX XXXX */
+  var formatted = '';
+  if(raw.startsWith('0')){
+    /* 09XX XXX XXXX */
+    var d = raw;
+    if(d.length <= 4) formatted = d;
+    else if(d.length <= 7) formatted = d.slice(0,4)+' '+d.slice(4);
+    else formatted = d.slice(0,4)+' '+d.slice(4,7)+' '+d.slice(7);
+  } else if(raw.startsWith('63')){
+    /* 639XX XXX XXXX → +63 9XX XXX XXXX */
+    var d = raw.slice(2);
+    if(d.length <= 3) formatted = '+63 '+d;
+    else if(d.length <= 6) formatted = '+63 '+d.slice(0,3)+' '+d.slice(3);
+    else formatted = '+63 '+d.slice(0,3)+' '+d.slice(3,6)+' '+d.slice(6);
+  } else {
+    formatted = raw;
+  }
+  /* Enforce maxlength on the formatted value */
+  input.value = formatted;
+}
+
+function validatePhone(phone){
+  /* Accept: +63 9XX XXX XXXX or 09XX XXX XXXX (with or without spaces) */
+  var stripped = phone.replace(/\s/g,'');
+  return /^(\+639\d{9}|09\d{9})$/.test(stripped);
+}
+
+/* ── REQ ERROR HELPERS ── */
+function clearReqErr(id){
+  var el=document.getElementById('err-req-'+id.replace('req-',''));
+  if(el){el.textContent='';el.style.display='none';}
+}
+function showReqErr(id,msg){
+  var el=document.getElementById('err-req-'+id.replace('req-',''));
+  if(el){el.textContent=msg;el.style.color='#ff6b6b';el.style.fontSize='.78rem';el.style.fontFamily='\'Lora\',serif';el.style.marginTop='4px';el.style.display='block';}
+}
+
+/* ── CHANGE CREDENTIALS ── */
+function changeCredentials(){
+  var curPass = document.getElementById('acc-cur-pass').value;
+  var newUser = document.getElementById('acc-new-user').value.trim();
+  var newPass = document.getElementById('acc-new-pass').value;
+  var confirmPass = document.getElementById('acc-confirm-pass').value;
+  var errEl = document.getElementById('acc-error');
+  function showErr(msg){errEl.textContent=msg;errEl.style.display='block';}
+  errEl.style.display='none';
+  if(!curPass){showErr('Please enter your current password.');return;}
+  if(!newUser && !newPass){showErr('Please enter a new username or new password.');return;}
+  if(newPass && newPass !== confirmPass){showErr('New passwords do not match.');return;}
+  if(newPass && newPass.length < 6){showErr('New password must be at least 6 characters.');return;}
+  apiPost('change_credentials', authData({
+    cur_password: curPass,
+    new_username: newUser || ADMIN_USERNAME,
+    new_password: newPass
+  }), function(res){
+    if(res.success){
+      if(newUser) ADMIN_USERNAME = newUser;
+      document.getElementById('cur-username-display').textContent = ADMIN_USERNAME;
+      document.getElementById('acc-cur-pass').value='';
+      document.getElementById('acc-new-user').value='';
+      document.getElementById('acc-new-pass').value='';
+      document.getElementById('acc-confirm-pass').value='';
+      toast('Credentials updated successfully!','🔐');
+    } else {
+      showErr(res.message || 'Update failed.');
+    }
+  });
+}
+
+/* ── TOAST ── */
+function toast(msg,icon){
+  document.getElementById('toast-icon').textContent=icon||'';
+  document.getElementById('toast-msg').textContent=' '+msg;
+  var el=document.getElementById('toast-el');
+  el.classList.add('show');
+  clearTimeout(el._t);
+  el._t=setTimeout(function(){el.classList.remove('show')},3200);
+}
+
+/* ── SCROLL REVEAL ── */
+(function(){
+  var obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){e.target.classList.add('on');obs.unobserve(e.target);}
+    });
+  },{threshold:.1,rootMargin:'0px 0px -36px 0px'});
+  document.querySelectorAll('.rev,.rev-l,.rev-r').forEach(function(el){obs.observe(el)});
+})();
+
+/* ── LOAD SETTINGS FROM DB ON PAGE LOAD ── */
+function loadSettingsFromDB(){
+  apiGet('get_settings', function(s){
+    if(!s || s.error) return;
+    /* Apply to page */
+    if(s.farm_name){
+      var footerP=document.querySelector('footer .footer-p');
+      if(footerP) footerP.innerHTML='© 2025 <strong style="color:#fff">'+s.farm_name+'</strong> — Premium Heritage Farm Pigs · '+(s.address||'');
+    }
+    if(s.address){
+      document.querySelectorAll('.ct').forEach(function(ct){
+        var strong=ct.querySelector('strong');
+        var span=ct.querySelector('span');
+        if(!strong||!span)return;
+        if(strong.textContent==='Farm Location') span.textContent=s.address;
+        if(strong.textContent==='Phone / Viber') span.textContent=s.phone||'';
+        if(strong.textContent==='Email') span.textContent=s.email||'';
+        if(strong.textContent==='Hours') span.textContent=s.hours||'';
+      });
+    }
+    if(s.start_price){
+      var heroPriceBig=document.querySelector('.hero-price-big');
+      if(heroPriceBig) heroPriceBig.textContent='₱'+parseFloat(s.start_price).toLocaleString();
+    }
+    if(s.tagline){
+      var heroRule=document.querySelector('.hero-rule span');
+      if(heroRule) heroRule.textContent='✦ '+s.tagline+' ✦';
+    }
+    if(s.delivery_fee) DELIVERY_FEE=parseFloat(s.delivery_fee)||500;
+
+    /* Apply stat bar */
+    if(s.stat1_num) document.getElementById('stat-pigs').textContent=s.stat1_num;
+    if(s.stat1_lbl) document.getElementById('stat-pigs-label').textContent=s.stat1_lbl;
+    if(s.stat2_num) document.getElementById('stat-breeds').textContent=s.stat2_num;
+    if(s.stat2_lbl) document.getElementById('stat-breeds-label').textContent=s.stat2_lbl;
+    if(s.stat3_num) document.getElementById('stat-years').textContent=s.stat3_num;
+    if(s.stat3_lbl) document.getElementById('stat-years-label').textContent=s.stat3_lbl;
+    if(s.stat4_num) document.getElementById('stat-health').textContent=s.stat4_num;
+    if(s.stat4_lbl) document.getElementById('stat-health-label').textContent=s.stat4_lbl;
+
+    /* Pre-fill admin settings form fields */
+    if(s.farm_name) document.getElementById('s-farm-name').value=s.farm_name;
+    if(s.phone) document.getElementById('s-phone').value=s.phone;
+    if(s.email) document.getElementById('s-email').value=s.email;
+    if(s.address) document.getElementById('s-address').value=s.address;
+    if(s.hours) document.getElementById('s-hours').value=s.hours;
+    if(s.delivery_fee) document.getElementById('s-delivery-fee').value=s.delivery_fee;
+    if(s.start_price) document.getElementById('s-start-price').value=s.start_price;
+    if(s.tagline) document.getElementById('s-tagline').value=s.tagline;
+    if(s.stat1_num) document.getElementById('s-stat1-num').value=s.stat1_num;
+    if(s.stat1_lbl) document.getElementById('s-stat1-lbl').value=s.stat1_lbl;
+    if(s.stat2_num) document.getElementById('s-stat2-num').value=s.stat2_num;
+    if(s.stat2_lbl) document.getElementById('s-stat2-lbl').value=s.stat2_lbl;
+    if(s.stat3_num) document.getElementById('s-stat3-num').value=s.stat3_num;
+    if(s.stat3_lbl) document.getElementById('s-stat3-lbl').value=s.stat3_lbl;
+    if(s.stat4_num) document.getElementById('s-stat4-num').value=s.stat4_num;
+    if(s.stat4_lbl) document.getElementById('s-stat4-lbl').value=s.stat4_lbl;
+  });
+}
+
+/* ── INIT ── */
+SILENT_LOAD = true;
+loadSettingsFromDB();
+loadPigsFromDB();
+setTimeout(function(){ SILENT_LOAD = false; }, 5000);
+</script>
+</body>
+</html>
