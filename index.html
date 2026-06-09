@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Portfolio — Computer Engineer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f5f4f0; --surface: #fff; --ink: #111110; --ink-muted: #6b6a65;
+      --accent2: #d4501a; --border: #e2e1dc;
+      --mono: 'DM Mono', monospace; --serif: 'DM Serif Display', serif; --sans: 'DM Sans', sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ink); font-family: var(--sans); font-weight: 300; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+    /* NAV */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 3rem; background: rgba(245,244,240,0.88); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: var(--mono); font-size: 0.8rem; font-weight: 500; letter-spacing: 0.08em; color: var(--ink); text-decoration: none; }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a { font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.06em; color: var(--ink-muted); text-decoration: none; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--ink); }
+    .edit-toggle-btn { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.08em; padding: 0.5rem 1rem; background: var(--ink); color: #fff; border: none; cursor: pointer; transition: background 0.2s; }
+    .edit-toggle-btn:hover { background: var(--accent2); }
+    .edit-toggle-btn.active { background: var(--accent2); }
+
+    /* HERO */
+    #hero { min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; padding-top: 80px; }
+    .hero-left { display: flex; flex-direction: column; justify-content: center; padding: 6rem 3rem 6rem 5rem; border-right: 1px solid var(--border); }
+    .hero-tag { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.12em; color: var(--accent2); text-transform: uppercase; margin-bottom: 1.5rem; opacity: 0; animation: fadeUp 0.6s 0.1s forwards; }
+    .hero-name { font-family: var(--serif); font-size: clamp(3rem,5vw,5.5rem); line-height: 1.05; letter-spacing: -0.02em; margin-bottom: 1.5rem; opacity: 0; animation: fadeUp 0.6s 0.2s forwards; }
+    .hero-name em { font-style: italic; color: var(--ink-muted); }
+    .hero-bio { font-size: 1rem; color: var(--ink-muted); max-width: 400px; line-height: 1.8; margin-bottom: 2.5rem; opacity: 0; animation: fadeUp 0.6s 0.3s forwards; }
+    .hero-cta { display: inline-flex; align-items: center; gap: 0.6rem; font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.08em; text-decoration: none; color: #fff; background: var(--ink); padding: 0.85rem 1.75rem; border: 1px solid var(--ink); transition: background 0.2s, color 0.2s; opacity: 0; animation: fadeUp 0.6s 0.4s forwards; }
+    .hero-cta:hover { background: transparent; color: var(--ink); }
+    .hero-cta .arrow { transition: transform 0.2s; }
+    .hero-cta:hover .arrow { transform: translateX(4px); }
+    .hero-right { display: flex; flex-direction: column; justify-content: flex-end; padding: 6rem 3rem; opacity: 0; animation: fadeIn 1s 0.5s forwards; }
+    .hero-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; border: 1px solid var(--border); }
+    .stat-box { padding: 2rem 1.75rem; background: var(--surface); }
+    .stat-num { font-family: var(--serif); font-size: 2.8rem; line-height: 1; margin-bottom: 0.4rem; }
+    .stat-label { font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.1em; color: var(--ink-muted); text-transform: uppercase; }
+
+    /* SECTIONS */
+    section { padding: 7rem 5rem; }
+    .section-header { display: flex; align-items: baseline; gap: 1.5rem; margin-bottom: 4rem; border-bottom: 1px solid var(--border); padding-bottom: 1.25rem; }
+    .section-num { font-family: var(--mono); font-size: 0.65rem; color: var(--accent2); letter-spacing: 0.1em; }
+    .section-title { font-family: var(--serif); font-size: clamp(2rem,3.5vw,3rem); letter-spacing: -0.02em; }
+
+    /* ABOUT */
+    #about { background: var(--surface); }
+    .about-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 5rem; align-items: start; }
+    .about-text p { color: var(--ink-muted); margin-bottom: 1.25rem; font-size: 1.05rem; line-height: 1.85; }
+    .about-text p strong { color: var(--ink); font-weight: 500; }
+    .sidebar-block { margin-bottom: 2.5rem; }
+    .sidebar-label { font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.1em; color: var(--accent2); text-transform: uppercase; margin-bottom: 0.75rem; }
+    .sidebar-value { font-size: 0.95rem; color: var(--ink); }
+    .sidebar-value a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+
+    /* PROJECTS */
+    #projects { background: var(--bg); }
+    .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.5px; background: var(--border); border: 1px solid var(--border); }
+    .project-card { background: var(--surface); padding: 2.5rem; position: relative; overflow: hidden; transition: background 0.2s; }
+    .project-card:hover { background: #fafaf8; }
+    .project-card::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: var(--accent2); transition: width 0.3s; }
+    .project-card:hover::after { width: 100%; }
+    .project-type { font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.1em; color: var(--accent2); text-transform: uppercase; margin-bottom: 1rem; }
+    .project-title { font-family: var(--serif); font-size: 1.5rem; margin-bottom: 0.75rem; }
+    .project-desc { font-size: 0.9rem; color: var(--ink-muted); line-height: 1.75; margin-bottom: 1.75rem; }
+    .project-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .tag { font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.06em; color: var(--ink-muted); border: 1px solid var(--border); padding: 0.3rem 0.65rem; background: var(--bg); }
+    .project-link { display: inline-flex; align-items: center; gap: 0.4rem; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.06em; color: var(--ink); text-decoration: none; margin-top: 1.5rem; border-bottom: 1px solid var(--ink); padding-bottom: 2px; transition: gap 0.2s; }
+    .project-link:hover { gap: 0.75rem; }
+    .card-edit-btn { position: absolute; top: 1rem; right: 1rem; font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.06em; padding: 0.3rem 0.65rem; background: var(--ink); color: #fff; border: none; cursor: pointer; display: none; }
+    .card-edit-btn:hover { background: var(--accent2); }
+    .edit-mode .card-edit-btn { display: block; }
+
+    /* SKILLS */
+    #skills { background: var(--surface); }
+    .skills-grid { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--border); }
+    .skill-group { padding: 2.5rem; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .skill-group:nth-child(3n) { border-right: none; }
+    .skill-group:nth-last-child(-n+3) { border-bottom: none; }
+    .skill-group-title { font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.12em; color: var(--accent2); text-transform: uppercase; margin-bottom: 1.25rem; }
+    .skill-list { list-style: none; }
+    .skill-list li { font-size: 0.9rem; color: var(--ink-muted); padding: 0.4rem 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.6rem; }
+    .skill-list li:last-child { border-bottom: none; }
+    .skill-list li::before { content: ''; width: 5px; height: 5px; background: var(--accent2); flex-shrink: 0; }
+    .skill-group-edit-btn { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.06em; padding: 0.3rem 0.65rem; background: var(--ink); color: #fff; border: none; cursor: pointer; margin-top: 1rem; display: none; width: 100%; }
+    .skill-group-edit-btn:hover { background: var(--accent2); }
+    .edit-mode .skill-group-edit-btn { display: block; }
+
+    /* Empty state */
+    .skills-empty { padding: 4rem 2rem; text-align: center; border: 1px dashed var(--border); color: var(--ink-muted); font-family: var(--mono); font-size: 0.8rem; letter-spacing: 0.06em; display: none; }
+    .skills-empty.show { display: block; }
+
+    /* CONTACT */
+    #contact { background: var(--ink); color: var(--surface); padding: 7rem 5rem; }
+    #contact .section-header { border-color: #333; }
+    #contact .section-title { color: var(--surface); }
+    #contact .section-num { color: #d4501a; }
+    .contact-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 5rem; align-items: start; }
+    .contact-headline { font-family: var(--serif); font-size: clamp(1.8rem,3vw,2.8rem); line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 1.5rem; color: var(--surface); }
+    .contact-subtext { color: #999; font-size: 1rem; line-height: 1.8; max-width: 420px; }
+    .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+    .form-label { font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.1em; color: #777; text-transform: uppercase; }
+    .form-input, .form-textarea { background: #1c1c1c; border: 1px solid #333; color: var(--surface); padding: 0.85rem 1rem; font-family: var(--sans); font-size: 0.9rem; outline: none; transition: border-color 0.2s; font-weight: 300; }
+    .form-input:focus, .form-textarea:focus { border-color: #d4501a; }
+    .form-textarea { resize: vertical; min-height: 130px; }
+    .form-submit { display: inline-flex; align-items: center; gap: 0.6rem; font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.08em; color: var(--ink); background: var(--surface); border: none; padding: 1rem 2rem; cursor: pointer; transition: background 0.2s, color 0.2s; align-self: flex-start; margin-top: 0.5rem; }
+    .form-submit:hover { background: var(--accent2); color: white; }
+
+    /* FOOTER */
+    footer { background: #0d0d0d; padding: 1.5rem 5rem; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #222; }
+    .footer-left { font-family: var(--mono); font-size: 0.65rem; color: #555; letter-spacing: 0.06em; }
+    .footer-right { display: flex; gap: 2rem; }
+    .footer-right a { font-family: var(--mono); font-size: 0.65rem; color: #555; text-decoration: none; letter-spacing: 0.06em; transition: color 0.2s; }
+    .footer-right a:hover { color: #d4501a; }
+
+    /* EDIT PANEL */
+    .panel-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; }
+    .panel-backdrop.open { display: block; }
+    .edit-panel { position: fixed; top: 0; right: -520px; width: 500px; height: 100vh; background: var(--surface); border-left: 1px solid var(--border); z-index: 1000; overflow-y: auto; transition: right 0.3s ease; display: flex; flex-direction: column; }
+    .edit-panel.open { right: 0; }
+    .panel-header { display: flex; align-items: center; justify-content: space-between; padding: 1.5rem 2rem; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--surface); z-index: 2; }
+    .panel-title { font-family: var(--mono); font-size: 0.85rem; font-weight: 500; letter-spacing: 0.06em; }
+    .panel-close { font-family: var(--mono); font-size: 1.2rem; background: none; border: none; cursor: pointer; color: var(--ink-muted); padding: 0.25rem 0.5rem; }
+    .panel-close:hover { color: var(--ink); }
+    .panel-body { padding: 2rem; flex: 1; }
+    .panel-field { margin-bottom: 1.5rem; }
+    .panel-label { font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.1em; color: var(--accent2); text-transform: uppercase; margin-bottom: 0.5rem; display: block; }
+    .panel-input, .panel-textarea { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--ink); padding: 0.75rem 1rem; font-family: var(--sans); font-size: 0.9rem; outline: none; transition: border-color 0.2s; font-weight: 300; }
+    .panel-input:focus, .panel-textarea:focus { border-color: var(--accent2); }
+    .panel-textarea { resize: vertical; min-height: 90px; }
+    .panel-hint { font-size: 0.75rem; color: var(--ink-muted); margin-top: 0.35rem; font-family: var(--mono); }
+    .panel-actions { display: flex; gap: 0.75rem; padding: 1.5rem 2rem; border-top: 1px solid var(--border); position: sticky; bottom: 0; background: var(--surface); }
+    .btn-save { font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.08em; padding: 0.85rem 1.75rem; background: var(--ink); color: #fff; border: none; cursor: pointer; transition: background 0.2s; flex: 1; }
+    .btn-save:hover { background: var(--accent2); }
+    .btn-cancel { font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.08em; padding: 0.85rem 1.25rem; background: transparent; color: var(--ink-muted); border: 1px solid var(--border); cursor: pointer; }
+    .btn-cancel:hover { color: var(--ink); }
+    .btn-delete { font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.08em; padding: 0.85rem 1.25rem; background: transparent; color: #c0392b; border: 1px solid #e0b0b0; cursor: pointer; }
+    .btn-delete:hover { background: #fff0f0; }
+    .add-btn { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.08em; padding: 0.75rem 1.5rem; background: transparent; color: var(--ink); border: 1px dashed var(--border); cursor: pointer; transition: border-color 0.2s, color 0.2s; display: none; width: 100%; margin-top: 1.5px; }
+    .add-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+    .edit-mode .add-btn { display: block; }
+    .edit-banner { display: none; position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); background: var(--ink); color: #fff; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.08em; padding: 0.75rem 1.5rem; z-index: 200; border: 1px solid #333; white-space: nowrap; }
+    .edit-banner.show { display: block; }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.65s ease, transform 0.65s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { gap: 1.5rem; }
+      #hero { grid-template-columns: 1fr; }
+      .hero-left { padding: 4rem 1.5rem 3rem; border-right: none; border-bottom: 1px solid var(--border); }
+      .hero-right { padding: 3rem 1.5rem; }
+      section { padding: 5rem 1.5rem; }
+      .about-grid, .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .skills-grid { grid-template-columns: 1fr 1fr; }
+      .skill-group:nth-child(3n) { border-right: 1px solid var(--border); }
+      .skill-group:nth-child(2n) { border-right: none; }
+      #contact { padding: 5rem 1.5rem; }
+      footer { padding: 1.5rem; flex-direction: column; gap: 1rem; text-align: center; }
+      .form-row { grid-template-columns: 1fr; }
+      .edit-panel { width: 100%; right: -100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#hero" class="nav-logo">[ YOUR_NAME ]</a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <button class="edit-toggle-btn" id="editToggle" onclick="toggleEditMode()">✏ Edit Mode</button>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-left">
+      <p class="hero-tag">Computer Engineering Student</p>
+      <h1 class="hero-name">Your<br><em>Name</em><br>Here</h1>
+      <p class="hero-bio">I build things that sit at the intersection of hardware and software — from embedded systems and circuit design to full-stack applications. Currently in my first year of Computer Engineering and shipping projects year-round.</p>
+      <a href="#projects" class="hero-cta">View Projects <span class="arrow">→</span></a>
+    </div>
+    <div class="hero-right">
+      <div class="hero-stats">
+        <div class="stat-box"><div class="stat-num">3</div><div class="stat-label">Projects Built</div></div>
+        <div class="stat-box"><div class="stat-num">1st→2nd</div><div class="stat-label">Year of Study</div></div>
+        <div class="stat-box"><div class="stat-num">HW+SW</div><div class="stat-label">Focus Area</div></div>
+        <div class="stat-box"><div class="stat-num">CompE</div><div class="stat-label">Degree</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="section-header reveal"><span class="section-num">01</span><h2 class="section-title">About Me</h2></div>
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <p>I'm a <strong>Computer Engineering student</strong> with a passion for bridging the gap between hardware and software. I love working on systems where both worlds collide — writing firmware for microcontrollers, designing PCBs, and building the software layers that make everything talk together.</p>
+        <p>Outside of coursework, I tinker with <strong>Arduino and ESP32 projects</strong>, explore PC hardware optimization, and build tools that solve real problems. I believe the best engineers understand the full stack — from transistors to user interfaces.</p>
+        <p>This portfolio documents the work I've done throughout my studies — a live record of projects, experiments, and everything in between.</p>
+      </div>
+      <div class="about-sidebar reveal">
+        <div class="sidebar-block"><div class="sidebar-label">University</div><div class="sidebar-value">Your University Name</div></div>
+        <div class="sidebar-block"><div class="sidebar-label">Degree</div><div class="sidebar-value">B.S. Computer Engineering</div></div>
+        <div class="sidebar-block"><div class="sidebar-label">Currently</div><div class="sidebar-value">1st Year → 2nd Year</div></div>
+        <div class="sidebar-block"><div class="sidebar-label">GitHub</div><div class="sidebar-value"><a href="#">github.com/yourusername</a></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PROJECTS — Edit these 3 cards with your real projects.
+       Each card has: type, title, desc, tags, and a link.
+       ============================================================ -->
+  <section id="projects">
+    <div class="section-header reveal"><span class="section-num">02</span><h2 class="section-title">Projects</h2></div>
+    <div class="projects-grid" id="projectsGrid"></div>
+    <button class="add-btn" onclick="openAddProject()">+ Add New Project</button>
+  </section>
+
+  <!-- ============================================================
+       SKILLS — Add your skills here as you build them up.
+       Click "+ Add Skill Category" in Edit Mode to get started.
+       ============================================================ -->
+  <section id="skills">
+    <div class="section-header reveal"><span class="section-num">03</span><h2 class="section-title">Skills</h2></div>
+    <div class="skills-grid" id="skillsGrid"></div>
+    <div class="skills-empty" id="skillsEmpty">Skills coming soon — check back as the year goes on.</div>
+    <button class="add-btn" onclick="openAddSkillGroup()">+ Add Skill Category</button>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="section-header reveal"><span class="section-num">04</span><h2 class="section-title">Contact</h2></div>
+    <div class="contact-grid">
+      <div class="reveal">
+        <h3 class="contact-headline">Let's build<br><em style="color:#d4501a;">something</em><br>together.</h3>
+        <p class="contact-subtext">Whether you're a fellow engineer or someone with an interesting project idea — I'm always open to connecting. Drop a message below or reach me at <strong style="color:#ccc;">your@email.com</strong>.</p>
+      </div>
+      <div class="contact-form reveal">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Name</label><input type="text" class="form-input" placeholder="Jane Smith"></div>
+          <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" placeholder="jane@email.com"></div>
+        </div>
+        <div class="form-group"><label class="form-label">Subject</label><input type="text" class="form-input" placeholder="Project collaboration, question..."></div>
+        <div class="form-group"><label class="form-label">Message</label><textarea class="form-textarea" placeholder="Tell me about your project or idea..."></textarea></div>
+        <button class="form-submit">Send Message →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-left">© 2025 Your Name — Computer Engineering Portfolio</div>
+    <div class="footer-right"><a href="#">GitHub</a><a href="#">Resume</a></div>
+  </footer>
+
+  <!-- EDIT PANEL -->
+  <div class="panel-backdrop" id="backdrop" onclick="closePanel()"></div>
+  <div class="edit-panel" id="editPanel">
+    <div class="panel-header">
+      <span class="panel-title" id="panelTitle">Edit</span>
+      <button class="panel-close" onclick="closePanel()">×</button>
+    </div>
+    <div class="panel-body" id="panelBody"></div>
+    <div class="panel-actions" id="panelActions"></div>
+  </div>
+
+  <div class="edit-banner" id="editBanner">✏ Edit Mode ON — click Edit on any project or skill to change it</div>
+
+  <script>
+    // ============================================================
+    // DEFAULT PROJECTS — Replace these 3 with your real projects!
+    // ============================================================
+    const defaultProjects = [
+      {
+        id: 1,
+        type: "Hardware / Embedded",
+        title: "Project One",
+        desc: "Describe your first project here. What did you build, what problem does it solve, and how does it work?",
+        tags: "Arduino, C++",
+        link: "#"
+      },
+      {
+        id: 2,
+        type: "Software",
+        title: "Project Two",
+        desc: "Describe your second project here. What technologies did you use and what did you learn from building it?",
+        tags: "Python, VS Code",
+        link: "#"
+      },
+      {
+        id: 3,
+        type: "Hardware + Software",
+        title: "Project Three",
+        desc: "Describe your third project here. Feel free to include a GitHub link so visitors can see the code.",
+        tags: "ESP32, C",
+        link: "#"
+      }
+    ];
+
+    // ============================================================
+    // DEFAULT SKILLS — Empty on purpose. Add yours as you go!
+    // ============================================================
+    const defaultSkills = [];
+
+    // STATE
+    let projects = JSON.parse(localStorage.getItem('pf_projects') || 'null') || defaultProjects;
+    let skills   = JSON.parse(localStorage.getItem('pf_skills')   || 'null') || defaultSkills;
+    let editMode = false;
+
+    function save() {
+      localStorage.setItem('pf_projects', JSON.stringify(projects));
+      localStorage.setItem('pf_skills',   JSON.stringify(skills));
+    }
+
+    // RENDER PROJECTS
+    function renderProjects() {
+      const grid = document.getElementById('projectsGrid');
+      grid.innerHTML = '';
+      projects.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'project-card reveal';
+        card.innerHTML = `
+          <button class="card-edit-btn" onclick="openEditProject(${p.id})">Edit</button>
+          <div class="project-type">${p.type}</div>
+          <h3 class="project-title">${p.title}</h3>
+          <p class="project-desc">${p.desc}</p>
+          <div class="project-tags">${p.tags.split(',').map(t=>`<span class="tag">${t.trim()}</span>`).join('')}</div>
+          ${p.link && p.link !== '#' ? `<a href="${p.link}" class="project-link" target="_blank">View Project →</a>` : `<a href="#" class="project-link">View Project →</a>`}
+        `;
+        grid.appendChild(card);
+      });
+      observeReveals();
+    }
+
+    // RENDER SKILLS
+    function renderSkills() {
+      const grid  = document.getElementById('skillsGrid');
+      const empty = document.getElementById('skillsEmpty');
+      grid.innerHTML = '';
+
+      if (skills.length === 0) {
+        empty.classList.add('show');
+        return;
+      }
+      empty.classList.remove('show');
+
+      skills.forEach(s => {
+        const group = document.createElement('div');
+        group.className = 'skill-group reveal';
+        group.innerHTML = `
+          <div class="skill-group-title">${s.title}</div>
+          <ul class="skill-list">
+            ${s.items.split('\n').filter(i=>i.trim()).map(i=>`<li>${i.trim()}</li>`).join('')}
+          </ul>
+          <button class="skill-group-edit-btn" onclick="openEditSkill(${s.id})">Edit Category</button>
+        `;
+        grid.appendChild(group);
+      });
+      observeReveals();
+    }
+
+    // EDIT MODE
+    function toggleEditMode() {
+      editMode = !editMode;
+      document.body.classList.toggle('edit-mode', editMode);
+      const btn = document.getElementById('editToggle');
+      btn.textContent = editMode ? '✓ Done Editing' : '✏ Edit Mode';
+      btn.classList.toggle('active', editMode);
+      document.getElementById('editBanner').classList.toggle('show', editMode);
+    }
+
+    // PANEL
+    function openPanel(title, bodyHTML, actions) {
+      document.getElementById('panelTitle').textContent = title;
+      document.getElementById('panelBody').innerHTML = bodyHTML;
+      document.getElementById('panelActions').innerHTML = actions;
+      document.getElementById('editPanel').classList.add('open');
+      document.getElementById('backdrop').classList.add('open');
+    }
+    function closePanel() {
+      document.getElementById('editPanel').classList.remove('open');
+      document.getElementById('backdrop').classList.remove('open');
+    }
+
+    // PROJECT EDITOR
+    function projectForm(p) {
+      return `
+        <div class="panel-field"><label class="panel-label">Category / Type</label><input class="panel-input" id="pType" value="${p.type}" placeholder="e.g. Hardware / Embedded"></div>
+        <div class="panel-field"><label class="panel-label">Project Title</label><input class="panel-input" id="pTitle" value="${p.title}" placeholder="My Awesome Project"></div>
+        <div class="panel-field"><label class="panel-label">Description</label><textarea class="panel-textarea" id="pDesc">${p.desc}</textarea></div>
+        <div class="panel-field"><label class="panel-label">Tags</label><input class="panel-input" id="pTags" value="${p.tags}" placeholder="C++, Arduino, Python"><p class="panel-hint">Separate with commas</p></div>
+        <div class="panel-field"><label class="panel-label">Project Link (optional)</label><input class="panel-input" id="pLink" value="${p.link === '#' ? '' : p.link}" placeholder="https://github.com/you/project"></div>
+      `;
+    }
+    function openEditProject(id) {
+      if (!editMode) return;
+      const p = projects.find(x => x.id === id);
+      openPanel('Edit Project', projectForm(p),
+        `<button class="btn-save" onclick="saveProject(${id})">Save Changes</button>
+         <button class="btn-cancel" onclick="closePanel()">Cancel</button>
+         <button class="btn-delete" onclick="deleteProject(${id})">Delete</button>`);
+    }
+    function openAddProject() {
+      openPanel('New Project', projectForm({ type:'', title:'', desc:'', tags:'', link:'' }),
+        `<button class="btn-save" onclick="addProject()">Add Project</button>
+         <button class="btn-cancel" onclick="closePanel()">Cancel</button>`);
+    }
+    function saveProject(id) {
+      const p = projects.find(x => x.id === id);
+      p.type  = document.getElementById('pType').value.trim();
+      p.title = document.getElementById('pTitle').value.trim();
+      p.desc  = document.getElementById('pDesc').value.trim();
+      p.tags  = document.getElementById('pTags').value.trim();
+      p.link  = document.getElementById('pLink').value.trim() || '#';
+      save(); renderProjects(); closePanel();
+    }
+    function addProject() {
+      projects.push({
+        id: Date.now(),
+        type:  document.getElementById('pType').value.trim()  || 'Project',
+        title: document.getElementById('pTitle').value.trim() || 'New Project',
+        desc:  document.getElementById('pDesc').value.trim()  || '',
+        tags:  document.getElementById('pTags').value.trim()  || '',
+        link:  document.getElementById('pLink').value.trim()  || '#'
+      });
+      save(); renderProjects(); closePanel();
+    }
+    function deleteProject(id) {
+      if (!confirm('Delete this project?')) return;
+      projects = projects.filter(x => x.id !== id);
+      save(); renderProjects(); closePanel();
+    }
+
+    // SKILL EDITOR
+    function skillForm(s) {
+      return `
+        <div class="panel-field"><label class="panel-label">Category Title</label><input class="panel-input" id="sTitle" value="${s.title}" placeholder="e.g. Languages"></div>
+        <div class="panel-field"><label class="panel-label">Skills</label><textarea class="panel-textarea" style="min-height:180px" id="sItems">${s.items}</textarea><p class="panel-hint">One skill per line</p></div>
+      `;
+    }
+    function openEditSkill(id) {
+      if (!editMode) return;
+      const s = skills.find(x => x.id === id);
+      openPanel('Edit Skill Category', skillForm(s),
+        `<button class="btn-save" onclick="saveSkill(${id})">Save Changes</button>
+         <button class="btn-cancel" onclick="closePanel()">Cancel</button>
+         <button class="btn-delete" onclick="deleteSkill(${id})">Delete</button>`);
+    }
+    function openAddSkillGroup() {
+      openPanel('New Skill Category', skillForm({ title:'', items:'' }),
+        `<button class="btn-save" onclick="addSkillGroup()">Add Category</button>
+         <button class="btn-cancel" onclick="closePanel()">Cancel</button>`);
+    }
+    function saveSkill(id) {
+      const s = skills.find(x => x.id === id);
+      s.title = document.getElementById('sTitle').value.trim();
+      s.items = document.getElementById('sItems').value.trim();
+      save(); renderSkills(); closePanel();
+    }
+    function addSkillGroup() {
+      skills.push({
+        id: Date.now(),
+        title: document.getElementById('sTitle').value.trim() || 'New Category',
+        items: document.getElementById('sItems').value.trim() || ''
+      });
+      save(); renderSkills(); closePanel();
+    }
+    function deleteSkill(id) {
+      if (!confirm('Delete this skill category?')) return;
+      skills = skills.filter(x => x.id !== id);
+      save(); renderSkills(); closePanel();
+    }
+
+    // SCROLL REVEAL
+    function observeReveals() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((e, i) => {
+          if (e.isIntersecting) {
+            setTimeout(() => e.target.classList.add('visible'), i * 60);
+            observer.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.1 });
+      document.querySelectorAll('.reveal:not(.visible)').forEach(el => observer.observe(el));
+    }
+
+    // NAV HIGHLIGHT
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(s => { if (window.scrollY >= s.offsetTop - 120) current = s.id; });
+      navLinks.forEach(a => { a.style.color = a.getAttribute('href') === `#${current}` ? '#111' : ''; });
+    });
+
+    // INIT
+    renderProjects();
+    renderSkills();
+    observeReveals();
+  </script>
+</body>
+</html>
