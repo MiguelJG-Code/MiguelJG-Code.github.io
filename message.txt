@@ -1,0 +1,229 @@
+//  CERBERUS MULTI-MODE BATTLE BOT
+//  Sumo | Hockey | Maze Solver | Line Follower
+//  ESP32 WROOM 38-pin
+
+// ── DIP Switch ──────────────────────────────────────────
+#define SW1_SUMO        15  
+#define SW2_HOCKEY      16
+#define SW3_MAZE        12   
+#define SW4_LINE         4   
+
+// ── Motor Driver L298N ──────────────────────────────────
+#define ENA             32
+#define IN1             25
+#define IN2             26
+#define ENB             33
+#define IN3             27
+#define IN4             14
+
+// ── Ultrasonic Sensors ──────────────────────────────────
+#define TRIG_FRONT       5
+#define ECHO_FRONT      18
+#define TRIG_LEFT       19
+#define ECHO_LEFT       21
+#define TRIG_RIGHT      23
+#define ECHO_RIGHT      22
+
+// ── IR Sensors (bottom) ─────────────────────────────────
+#define IR_LEFT         34
+#define IR_RIGHT        35
+
+// ── Speed Settings ──────────────────────────────────────
+#define SPEED_FULL      255
+#define SPEED_TURN      180
+#define SPEED_SLOW      150
+#define SPEED_SEARCH    200
+
+// ── Distance Thresholds (cm) ────────────────────────────
+#define DETECT_DIST      40
+#define WALL_DIST        15
+#define ATTACK_DIST      15
+
+// ── Motor Trim (600RPM left vs 300RPM right) ────────────
+#define LEFT_TRIM       0.50  // adjust between 0.45–0.55 to go straight
+
+// ── HC-06 Bluetooth (Serial2) ────────────────────────────
+#define BT_RX           16
+#define BT_TX           17
+
+void setup() {
+  Serial.begin(115200);
+  Serial2.begin(9600, SERIAL_8N1, BT_RX, BT_TX);
+
+  pinMode(SW1_SUMO,   INPUT_PULLUP);
+  pinMode(SW2_HOCKEY, INPUT_PULLUP);
+  pinMode(SW3_MAZE,   INPUT_PULLUP);
+  pinMode(SW4_LINE,   INPUT_PULLUP);
+
+  pinMode(ENA, OUTPUT); pinMode(IN1, OUTPUT); pinMode(IN2, OUTPUT);
+  pinMode(ENB, OUTPUT); pinMode(IN3, OUTPUT); pinMode(IN4, OUTPUT);
+
+  pinMode(TRIG_FRONT, OUTPUT); pinMode(ECHO_FRONT, INPUT);
+  pinMode(TRIG_LEFT,  OUTPUT); pinMode(ECHO_LEFT,  INPUT);
+  pinMode(TRIG_RIGHT, OUTPUT); pinMode(ECHO_RIGHT, INPUT);
+
+  pinMode(IR_LEFT,  INPUT);
+  pinMode(IR_RIGHT, INPUT);
+
+  stopMotors();
+  Serial.println("Cerberus Bot Ready!");
+  Serial.println("SW1=Sumo | SW2=Hockey | SW3=Maze | SW4=Line | SW3+SW4=Hockey");
+  delay(3000);
+}
+
+void loop() {
+  bool sw1 = (digitalRead(SW1_SUMO)   == LOW);
+  bool sw2 = (digitalRead(SW2_HOCKEY) == LOW);
+  bool sw3 = (digitalRead(SW3_MAZE)   == LOW);
+  bool sw4 = (digitalRead(SW4_LINE)   == LOW);
+
+  if (sw3 && sw4) {
+    Serial.println("MODE: HOCKEY (SW3+SW4)");
+    runHockey();
+  }
+  else if (sw1) {
+    Serial.println("MODE: SUMO");
+    runSumo();
+  }
+  else if (sw2) {
+    Serial.println("MODE: HOCKEY (SW2)");
+    runHockey();
+  }
+  else if (sw3) {
+    Serial.println("MODE: MAZE");
+    runMaze();
+  }
+  else if (sw4) {
+    Serial.println("MODE: LINE FOLLOWER");
+    runLineFollow();
+  }
+  else {
+    Serial.println("NO MODE SELECTED");
+    stopMotors();
+  }
+  delay(50);
+}
+
+// ── MODE 1 — SUMO ────────────────────────────────────────
+void runSumo() {
+  bool edgeLeft  = (digitalRead(IR_LEFT)  == HIGH);
+  bool edgeRight = (digitalRead(IR_RIGHT) == HIGH);
+
+  if (edgeLeft && edgeRight) {
+    moveBackward(SPEED_FULL); delay(400);
+    turnRight(SPEED_TURN);    delay(300);
+    return;
+  }
+  if (edgeLeft) {
+    moveBackward(SPEED_FULL); delay(300);
+    turnRight(SPEED_TURN);    delay(250);
+    return;
+  }
+  if (edgeRight) {
+    moveBackward(SPEED_FULL); delay(300);
+    turnLeft(SPEED_TURN);     delay(250);
+    return;
+  }
+
+  long distFront = getDistance(TRIG_FRONT, ECHO_FRONT);
+  long distLeft  = getDistance(TRIG_LEFT,  ECHO_LEFT);
+  long distRight = getDistance(TRIG_RIGHT, ECHO_RIGHT);
+
+  if (distFront > 0 && distFront < DETECT_DIST) { moveForward(SPEED_FULL); return; }
+  if (distLeft  > 0 && distLeft  < DETECT_DIST) { turnLeft(SPEED_TURN);  delay(100); return; }
+  if (distRight > 0 && distRight < DETECT_DIST) { turnRight(SPEED_TURN); delay(100); return; }
+
+  turnRight(SPEED_SEARCH);
+  delay(100);
+}
+
+// ── MODE 2 — HOCKEY (BT remote via HC-06) ───────────────
+//  F=Forward  B=Backward  L=Left  R=Right  S=Stop
+void runHockey() {
+  if (Serial2.available()) {
+    char cmd = Serial2.read();
+    Serial.print("BT CMD: "); Serial.println(cmd);
+    switch (cmd) {
+      case 'F': case 'f': moveForward(SPEED_FULL);   break;
+      case 'B': case 'b': moveBackward(SPEED_FULL);  break;
+      case 'L': case 'l': turnLeft(SPEED_TURN);      break;
+      case 'R': case 'r': turnRight(SPEED_TURN);     break;
+      case 'S': case 's': default: stopMotors();     break;
+    }
+  }
+}
+
+// ── MODE 3 — MAZE SOLVER (Left Hand Rule) ───────────────
+void runMaze() {
+  long distFront = getDistance(TRIG_FRONT, ECHO_FRONT);
+  long distLeft  = getDistance(TRIG_LEFT,  ECHO_LEFT);
+  long distRight = getDistance(TRIG_RIGHT, ECHO_RIGHT);
+
+  Serial.print("F:"); Serial.print(distFront);
+  Serial.print(" L:"); Serial.print(distLeft);
+  Serial.print(" R:"); Serial.println(distRight);
+
+  if (distFront < WALL_DIST) {
+    stopMotors(); delay(100);
+    if      (distLeft  > WALL_DIST) { turnLeft(SPEED_TURN);  delay(400); }
+    else if (distRight > WALL_DIST) { turnRight(SPEED_TURN); delay(400); }
+    else                            { turnRight(SPEED_TURN); delay(800); }
+    return;
+  }
+
+  if      (distLeft > 25) { turnLeft(SPEED_SLOW);  delay(100); }
+  else if (distLeft < 8)  { turnRight(SPEED_SLOW); delay(100); }
+  else                    { moveForward(SPEED_SLOW); }
+}
+
+// ── MODE 4 — LINE FOLLOWER ───────────────────────────────
+void runLineFollow() {
+  bool leftOnLine  = (digitalRead(IR_LEFT)  == LOW);
+  bool rightOnLine = (digitalRead(IR_RIGHT) == LOW);
+
+  if      ( leftOnLine &&  rightOnLine) { moveForward(SPEED_SLOW); }
+  else if ( leftOnLine && !rightOnLine) { turnLeft(SPEED_SLOW);  delay(50); }
+  else if (!leftOnLine &&  rightOnLine) { turnRight(SPEED_SLOW); delay(50); }
+  else                                  { turnRight(SPEED_SLOW); delay(100); }
+}
+
+// ── MOTOR FUNCTIONS (LEFT_TRIM applied to ENA) ───────────
+void moveForward(int speed) {
+  analogWrite(ENA, speed * LEFT_TRIM);
+  analogWrite(ENB, speed);
+  digitalWrite(IN1, HIGH); digitalWrite(IN2, LOW);
+  digitalWrite(IN3, HIGH); digitalWrite(IN4, LOW);
+}
+void moveBackward(int speed) {
+  analogWrite(ENA, speed * LEFT_TRIM);
+  analogWrite(ENB, speed);
+  digitalWrite(IN1, LOW);  digitalWrite(IN2, HIGH);
+  digitalWrite(IN3, LOW);  digitalWrite(IN4, HIGH);
+}
+void turnLeft(int speed) {
+  analogWrite(ENA, speed * LEFT_TRIM);
+  analogWrite(ENB, speed);
+  digitalWrite(IN1, LOW);  digitalWrite(IN2, HIGH);
+  digitalWrite(IN3, HIGH); digitalWrite(IN4, LOW);
+}
+void turnRight(int speed) {
+  analogWrite(ENA, speed * LEFT_TRIM);
+  analogWrite(ENB, speed);
+  digitalWrite(IN1, HIGH); digitalWrite(IN2, LOW);
+  digitalWrite(IN3, LOW);  digitalWrite(IN4, HIGH);
+}
+void stopMotors() {
+  analogWrite(ENA, 0); analogWrite(ENB, 0);
+  digitalWrite(IN1, LOW); digitalWrite(IN2, LOW);
+  digitalWrite(IN3, LOW); digitalWrite(IN4, LOW);
+}
+
+// ── ULTRASONIC DISTANCE ──────────────────────────────────
+long getDistance(int trigPin, int echoPin) {
+  digitalWrite(trigPin, LOW);  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH); delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  long duration = pulseIn(echoPin, HIGH, 30000);
+  if (duration == 0) return 0;
+  return duration * 0.034 / 2;
+}
