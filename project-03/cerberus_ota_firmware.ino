@@ -85,7 +85,7 @@ const char* currentMode = "NONE";
 const char* lastMode    = "NONE";
 volatile char bleCmd    = 'S';
 
-// ── Ultrasonic ───────────────────────────────────────────────────────────
+// Ultrasonic 
 
 long readOneSensor(int trigPin, int echoPin) {
   digitalWrite(trigPin, LOW);
@@ -118,7 +118,7 @@ void readAllSensors(long &us1, long &us2, long &us3) {
   us3 = readOneSensor(TRIG_RIGHT, ECHO_RIGHT); delay(US_SETTLE_MS);
 }
 
-// ── WiFi ─────────────────────────────────────────────────────────────────
+//  WiFi 
 
 void startWifi() {
   if (wifiActive) return;
@@ -183,7 +183,7 @@ void stopWifi() {
   Serial.println("[WIFI] Disabled.");
 }
 
-// ── Bluetooth ────────────────────────────────────────────────────────────
+// Bluetooth 
 
 void startBle() {
   if (bleActive) return;
@@ -203,7 +203,7 @@ void stopBle() {
   Serial.println("[BT] Stopped.");
 }
 
-// ── Telemetry ────────────────────────────────────────────────────────────
+// Telemetry
 
 void broadcastTelemetry() {
   if (!wifiActive) return;
@@ -251,7 +251,7 @@ void broadcastMode() {
   }
 }
 
-// ── Setup ────────────────────────────────────────────────────────────────
+// Setup
 
 void setup() {
   WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
@@ -284,7 +284,7 @@ void setup() {
   delay(2000);
 }
 
-// ── Loop ─────────────────────────────────────────────────────────────────
+// Loop 
 
 void loop() {
   bool sw1 = (digitalRead(SW1_SUMO)   == LOW);
@@ -349,7 +349,7 @@ void loop() {
   delay(50);
 }
 
-// ── Mode 1: Sumo ─────────────────────────────────────────────────────────
+// Mode 1: Sumo 
 // IR sensors are front-facing — LOW = enemy detected
 // Ultrasonic backs up IR for range and side detection
 // No edge IR — bot never retreats unless pushed to boundary
@@ -364,21 +364,21 @@ void runSumo() {
     return;
   }
 
-  // Only left IR sees enemy — turn left to align then charge
+  // Only left IR sees enemy turn left to align then charge
   if (irLeft && !irRight) {
     turnLeft(SPEED_TURN); delay(80);
     moveForward(SPEED_FULL);
     return;
   }
 
-  // Only right IR sees enemy — turn right to align then charge
+  // Only right IR sees enemy  turn right to align then charge
   if (!irLeft && irRight) {
     turnRight(SPEED_TURN); delay(80);
     moveForward(SPEED_FULL);
     return;
   }
 
-  // IR sees nothing — use ultrasonic to find enemy
+  // IR sees nothing use ultrasonic to find enemy
   long distFront = getDistance(TRIG_FRONT, ECHO_FRONT);
   long distLeft  = getDistance(TRIG_LEFT,  ECHO_LEFT);
   long distRight = getDistance(TRIG_RIGHT, ECHO_RIGHT);
@@ -403,7 +403,7 @@ void runSumo() {
   delay(100);
 }
 
-// ── Mode 2: Hockey ───────────────────────────────────────────────────────
+// Mode 2: Hockey
 // BLE commands: F/B/L/R/S — WiFi OFF while active
 
 void runHockey() {
@@ -420,7 +420,7 @@ void runHockey() {
   }
 }
 
-// ── Mode 3: Maze ─────────────────────────────────────────────────────────
+// Mode 3: Maze 
 // Left-hand rule. 9999 = no echo = open space.
 // frontWall  : valid echo < MAZE_WALL_CM
 // leftOpen / rightOpen : 9999 OR reading > MAZE_OPEN_CM
@@ -439,7 +439,7 @@ void runMaze() {
     distLeft,  leftOpen  ? "OPEN" : "wall",
     distRight, rightOpen ? "OPEN" : "wall");
 
-  // No wall ahead — keep driving forward continuously.
+  // No wall ahead keep driving forward continuously.
   // Re-read front sensor in a tight loop so it reacts the moment a wall appears.
   if (!frontWall) {
     moveForward(SPEED_SLOW);
@@ -477,7 +477,7 @@ void runMaze() {
   moveForward(SPEED_SLOW); delay(MAZE_NUDGE_MS); stopMotors();
 }
 
-// ── Mode 4: Line Follower ────────────────────────────────────────────────
+// Mode 4: Line Follower 
 // IR HIGH = black line, LOW = white paper
 // pivotLeft/pivotRight: one motor only for smooth line hugging
 // lastTurn: remembers which side the line was last seen on for recovery
@@ -522,9 +522,7 @@ void runLineFollow() {
   }
 }
 
-// ── Motor Functions ───────────────────────────────────────────────────────
-
-void moveForward(int speed) {
+// Motor Functions 
   analogWrite(ENA, speed); analogWrite(ENB, speed);
   digitalWrite(IN1, HIGH); digitalWrite(IN2, LOW);
   digitalWrite(IN3, HIGH); digitalWrite(IN4, LOW);
